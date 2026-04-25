@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NexTrade Pro - Professional Crypto Trading</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0b0e11;
+      --bg-secondary: #1e2329;
+      --bg-tertiary: #2b3139;
+      --bg-hover: #3a3f47;
+      --bg-card: #1e2329;
+      --text-primary: #eaecef;
+      --text-secondary: #848e9c;
+      --text-tertiary: #5e6673;
+      --accent: #f0b90b;
+      --accent-hover: #d4a00a;
+      --success: #0ecb81;
+      --danger: #f6465d;
+      --warning: #f0b90b;
+      --border: #2b3139;
+      --input-bg: #2b3139;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.35);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+      --sidebar-width: 72px;
+      --sidebar-expanded: 240px;
+      --header-height: 64px;
+      --mobile-header-height: 56px;
+      --chart-min-height: 400px;
+      --mobile-chart-height: 300px;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8f9fa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f3f5;
+      --bg-hover: #e9ecef;
+      --bg-card: #ffffff;
+      --text-primary: #1a1b1e;
+      --text-secondary: #5e6673;
+      --text-tertiary: #848e9c;
+      --accent: #f0b90b;
+      --accent-hover: #d4a00a;
+      --success: #0ecb81;
+      --danger: #f6465d;
+      --warning: #f0b90b;
+      --border: #e9ecef;
+      --input-bg: #f8f9fa;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      transition: var(--transition);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      min-height: 100vh;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--text-tertiary); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+    /* Auth */
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      position: relative;
+      overflow: auto;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+      border: 1px solid var(--border);
+      margin: 1rem;
+    }
+    .auth-header { text-align: center; margin-bottom: 2rem; }
+    .auth-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: #000;
+      box-shadow: 0 4px 14px rgba(240, 185, 11, 0.3);
+    }
+    .auth-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .auth-subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1.125rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: var(--transition);
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240, 185, 11, 0.15); }
+    .form-control::placeholder { color: var(--text-tertiary); }
+    select.form-control {
+      appearance: none;
+      background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23848e9c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px;
+      padding-right: 2.5rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(240, 185, 11, 0.25); }
+    .btn:active { transform: translateY(0); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+    .btn-outline:hover { background: var(--bg-hover); }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; width: auto; }
+    .auth-switch { text-align: center; margin-top: 1.75rem; color: var(--text-secondary); font-size: 0.95rem; }
+    .auth-switch a { color: var(--accent); text-decoration: none; font-weight: 600; cursor: pointer; }
+    .auth-switch a:hover { text-decoration: underline; }
+    .profile-upload {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--border-radius-sm);
+    }
+    .profile-preview {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .profile-preview svg { width: 32px; height: 32px; color: var(--text-tertiary); }
+    .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-upload-btn {
+      background: var(--bg-secondary);
+      border: 1px dashed var(--border);
+      color: var(--text-secondary);
+      padding: 0.625rem 1rem;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .profile-upload-btn:hover { background: var(--bg-hover); border-color: var(--accent); color: var(--accent); }
+    .hidden { display: none !important; }
+
+    /* App Layout */
+    .app-container { display: none; min-height: 100vh; width: 100%; overflow: auto; }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      transition: var(--transition);
+      overflow-y: auto;
+      left: 0;
+      top: 0;
+    }
+    .sidebar.expanded { width: var(--sidebar-expanded); align-items: flex-start; padding-left: 1rem; }
+    .sidebar-header {
+      width: 100%;
+      padding: 0 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 800;
+    }
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      display: none;
+    }
+    .sidebar-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-item {
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 0.25rem;
+      transition: var(--transition);
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .nav-item:hover, .nav-item.active { background: var(--bg-hover); color: var(--text-primary); }
+    .nav-item.active { border-left: 3px solid var(--accent); padding-left: calc(1.25rem - 3px); }
+    .nav-item i { font-size: 1.25rem; width: 24px; text-align: center; flex-shrink: 0; }
+    .nav-text { display: none; font-size: 0.95rem; }
+    .sidebar.expanded .nav-text { display: block; }
+    .sidebar-footer { margin-top: auto; padding: 1rem; width: 100%; border-top: 1px solid var(--border); }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.625rem;
+      background: var(--bg-tertiary);
+      border: none;
+      border-radius: var(--border-radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .theme-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .theme-toggle i { font-size: 1.1rem; }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      transition: var(--transition);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      width: calc(100% - var(--sidebar-width));
+      overflow-y: auto;
+    }
+    .sidebar.expanded + .main-content {
+      margin-left: var(--sidebar-expanded);
+      width: calc(100% - var(--sidebar-expanded));
+    }
+
+    /* Header */
+    .header {
+      height: var(--header-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      transition: var(--transition);
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .header-left { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
+    .mobile-menu-toggle {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .mobile-menu-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .pair-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--border-radius-sm);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .pair-name { font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
+    .pair-symbol { color: var(--text-tertiary); font-size: 0.9rem; }
+    .pair-price { font-size: 1.4rem; font-weight: 700; font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace; }
+    .pair-change { font-weight: 600; font-size: 0.95rem; padding: 0.25rem 0.625rem; border-radius: 4px; }
+    .pair-change.positive { color: var(--success); background: rgba(14, 203, 129, 0.1); }
+    .pair-change.negative { color: var(--danger); background: rgba(246, 70, 93, 0.1); }
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .header-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .header-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .notification-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: var(--danger);
+      color: white;
+      font-size: 0.7rem;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      border: 2px solid var(--bg-secondary);
+    }
+    .user-menu {
+      position: relative;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .user-avatar:hover { border-color: var(--accent); }
+    .user-avatar svg { width: 20px; height: 20px; color: var(--text-tertiary); }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-info { display: none; text-align: right; min-width: 0; }
+    .user-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-balance { font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar.expanded .user-info { display: block; }
+
+    /* Dropdowns */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius);
+      min-width: 220px;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .dropdown-menu.show { display: flex; }
+    .dropdown-item {
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .dropdown-item:hover { background: var(--bg-hover); }
+    .dropdown-item.danger { color: var(--danger); }
+    .dropdown-divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
+    .notification-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius);
+      width: 380px;
+      max-width: calc(100vw - 2rem);
+      max-height: 420px;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      margin-top: 0.5rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .notification-dropdown.show { display: flex; }
+    .notification-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 1;
+    }
+    .notification-list { padding: 0.5rem 0; }
+    .notification-item {
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.875rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .notification-item:hover { background: var(--bg-hover); }
+    .notification-item.unread { background: rgba(240, 185, 11, 0.08); border-left: 3px solid var(--accent); }
+    .notification-item:last-child { border-bottom: none; }
+    .notification-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+    .notification-icon.trade { color: var(--success); background: rgba(14, 203, 129, 0.1); }
+    .notification-icon.deposit { color: var(--warning); background: rgba(240, 185, 11, 0.1); }
+    .notification-icon.transfer { color: var(--accent); background: rgba(240, 185, 11, 0.1); }
+    .notification-icon.liquidation { color: var(--danger); background: rgba(246, 70, 93, 0.1); }
+    .notification-content { flex: 1; min-width: 0; }
+    .notification-title { font-weight: 600; margin-bottom: 0.25rem; font-size: 0.95rem; }
+    .notification-message { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.375rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .notification-time { font-size: 0.75rem; color: var(--text-tertiary); }
+
+    /* Pages */
+    .page { display: none; padding: 1.5rem; flex: 1; animation: pageFade 0.3s ease; width: 100%; }
+    @keyframes pageFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .page.active { display: block; }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title { font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; }
+    .page-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    /* Markets Page */
+    .markets-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+    @media (min-width: 1200px) { .markets-container { grid-template-columns: 340px 1fr; } }
+    .coin-list {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      height: 600px;
+      min-height: 400px;
+    }
+    .coin-search { padding: 1rem; border-bottom: 1px solid var(--border); }
+    .coin-tabs {
+      display: flex;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      gap: 0.25rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .coin-tab {
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .coin-tab.active { background: var(--accent); color: #000; font-weight: 600; }
+    .coin-list-items { flex: 1; overflow-y: auto; padding: 0.25rem 0; }
+    .coin-item {
+      display: flex;
+      align-items: center;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: var(--transition);
+      gap: 0.875rem;
+    }
+    .coin-item:hover, .coin-item.active { background: var(--bg-hover); }
+    .coin-item.active { border-left: 3px solid var(--accent); padding-left: calc(1.25rem - 3px); }
+    .coin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+    .coin-icon svg { width: 22px; height: 22px; }
+    .coin-info { flex: 1; min-width: 0; }
+    .coin-name { font-weight: 600; margin-bottom: 0.1rem; font-size: 0.95rem; display: flex; align-items: center; gap: 0.375rem; }
+    .coin-symbol { font-size: 0.8rem; color: var(--text-tertiary); font-weight: 500; }
+    .coin-price { font-weight: 600; text-align: right; font-family: 'SF Mono', monospace; font-size: 0.95rem; min-width: 90px; }
+    .coin-change { font-size: 0.85rem; font-weight: 600; text-align: right; padding: 0.25rem 0.5rem; border-radius: 4px; min-width: 70px; }
+    .coin-change.positive { color: var(--success); background: rgba(14, 203, 129, 0.1); }
+    .coin-change.negative { color: var(--danger); background: rgba(246, 70, 93, 0.1); }
+
+    .chart-container {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      min-height: var(--chart-min-height);
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .chart-title { font-weight: 600; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem; }
+    .chart-timeframes { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .timeframe-btn {
+      padding: 0.375rem 0.75rem;
+      background: var(--bg-tertiary);
+      border: none;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      min-width: 44px;
+    }
+    .timeframe-btn.active, .timeframe-btn:hover { background: var(--accent); color: #000; }
+    .chart-actions { display: flex; gap: 0.375rem; }
+    .chart-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.95rem;
+    }
+    .chart-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: var(--chart-min-height);
+      background: var(--bg-primary);
+    }
+    .tv-chart-container {
+      width: 100%;
+      height: 100%;
+      min-height: var(--chart-min-height);
+      display: block;
+    }
+    .fullscreen-chart {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg-primary);
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      padding: 1rem;
+      animation: fadeIn 0.2s ease;
+      overflow: auto;
+    }
+    .fullscreen-chart.active { display: flex; }
+    .fullscreen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+    .fullscreen-exit {
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1.1rem;
+    }
+    .fullscreen-exit:hover { background: var(--danger); color: white; }
+    #fullscreen-chart { flex: 1; min-height: 0; width: 100%; }
+
+    /* Trading Panels */
+    .trading-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+    @media (min-width: 1200px) { .trading-container { grid-template-columns: 1fr 380px; } }
+    .trading-panel {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      max-height: calc(100vh - var(--header-height) - 3rem);
+      position: sticky;
+      top: calc(var(--header-height) + 1.5rem);
+      align-self: flex-start;
+    }
+    .panel-section { border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
+    .panel-section:last-child { border-bottom: none; padding-bottom: 0; }
+    .panel-title { font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem; }
+    .coin-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .coin-chip {
+      padding: 0.4rem 0.85rem;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid transparent;
+      flex-shrink: 0;
+    }
+    .coin-chip:hover, .coin-chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .coin-chip svg { width: 16px; height: 16px; }
+    .trade-type { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .trade-btn {
+      flex: 1;
+      padding: 0.875rem;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+    }
+    .trade-btn.buy, .trade-btn.long { background: rgba(14, 203, 129, 0.12); color: var(--success); border: 1px solid var(--success); }
+    .trade-btn.buy:hover, .trade-btn.long:hover { background: rgba(14, 203, 129, 0.2); }
+    .trade-btn.sell, .trade-btn.short { background: rgba(246, 70, 93, 0.12); color: var(--danger); border: 1px solid var(--danger); }
+    .trade-btn.sell:hover, .trade-btn.short:hover { background: rgba(246, 70, 93, 0.2); }
+    .trade-btn.active { box-shadow: 0 0 0 2px var(--accent); }
+    .input-group { margin-bottom: 1.125rem; }
+    .input-group label { display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+    .input-with-suffix { position: relative; }
+    .input-with-suffix input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      padding-right: 3.5rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: 'SF Mono', monospace;
+    }
+    .input-suffix {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .balance-display {
+      background: var(--bg-tertiary);
+      padding: 0.875rem 1.125rem;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 1.125rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border);
+    }
+    .balance-label { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+    .balance-amount { font-weight: 700; font-size: 1.15rem; font-family: 'SF Mono', monospace; color: var(--accent); }
+    .leverage-control { margin-bottom: 1.125rem; }
+    .leverage-header { display: flex; justify-content: space-between; margin-bottom: 0.625rem; font-weight: 500; }
+    .leverage-slider {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .leverage-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid var(--bg-card);
+    }
+    .leverage-slider::-webkit-slider-thumb:hover { transform: scale(1.1); box-shadow: 0 0 0 3px rgba(240, 185, 11, 0.3); }
+    .leverage-value { text-align: center; font-weight: 600; margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem; }
+    .positions-list { max-height: 320px; overflow-y: auto; }
+    .position-item {
+      padding: 0.875rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 0.75rem;
+      border-left: 3px solid var(--success);
+      transition: var(--transition);
+    }
+    .position-item:hover { transform: translateX(2px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .position-item.short { border-left-color: var(--danger); }
+    .position-header { display: flex; justify-content: space-between; margin-bottom: 0.625rem; font-weight: 600; font-size: 0.95rem; }
+    .position-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.875rem;
+    }
+    .position-pnl.positive { color: var(--success); font-weight: 600; }
+    .position-pnl.negative { color: var(--danger); font-weight: 600; }
+    .close-position {
+      width: 100%;
+      padding: 0.5rem;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+    .close-position:hover { background: #e03a4d; transform: translateY(-1px); }
+
+    /* Wallet Page */
+    .wallet-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; width: 100%; }
+    @media (min-width: 1200px) { .wallet-container { grid-template-columns: 1fr 380px; } }
+    .wallet-card {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      border: 1px solid var(--border);
+      max-height: calc(100vh - var(--header-height) - 3rem);
+      overflow-y: auto;
+      position: sticky;
+      top: calc(var(--header-height) + 1.5rem);
+      align-self: flex-start;
+    }
+    .balance-card {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      color: #000;
+      position: relative;
+      overflow: hidden;
+    }
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .balance-label { font-size: 0.95rem; opacity: 0.9; margin-bottom: 0.5rem; font-weight: 500; }
+    .balance-total { font-size: 2.2rem; font-weight: 800; margin-bottom: 1.25rem; font-family: 'SF Mono', monospace; letter-spacing: -0.5px; }
+    .balance-currency { font-size: 1rem; opacity: 0.85; font-weight: 500; }
+    .wallet-address {
+      background: rgba(0,0,0,0.12);
+      padding: 0.875rem 1.125rem;
+      border-radius: var(--border-radius-sm);
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(0,0,0,0.15);
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: #000;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: 0.5rem;
+    }
+    .copy-btn:hover { background: rgba(0,0,0,0.15); transform: scale(1.05); }
+    .wallet-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .wallet-action-btn {
+      padding: 0.875rem;
+      background: rgba(0,0,0,0.1);
+      border: none;
+      border-radius: var(--border-radius-sm);
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+    .wallet-action-btn:hover { background: rgba(0,0,0,0.2); transform: translateY(-1px); }
+    .wallet-action-btn i { font-size: 1.1rem; }
+    .deposit-chart-container { height: 220px; margin-top: 0.5rem; position: relative; }
+    .activity-log {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      max-height: calc(100vh - var(--header-height) - 3rem);
+      position: sticky;
+      top: calc(var(--header-height) + 1.5rem);
+      align-self: flex-start;
+    }
+    .activity-item {
+      display: flex;
+      gap: 0.875rem;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+    .activity-content { flex: 1; min-width: 0; }
+    .activity-title { font-weight: 600; margin-bottom: 0.25rem; font-size: 0.95rem; }
+    .activity-details { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.375rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .activity-time { font-size: 0.75rem; color: var(--text-tertiary); }
+    .activity-amount.positive { color: var(--success); font-weight: 600; }
+    .activity-amount.negative { color: var(--danger); font-weight: 600; }
+
+    /* Leaderboard */
+    .leaderboard-container {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      max-height: calc(100vh - var(--header-height) - 3rem);
+      overflow-y: auto;
+      position: sticky;
+      top: calc(var(--header-height) + 1.5rem);
+      align-self: flex-start;
+    }
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .leaderboard-title { font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem; }
+    .leaderboard-period {
+      background: var(--bg-tertiary);
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .leaderboard-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.75rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--border-radius-sm);
+      transition: var(--transition);
+    }
+    .leaderboard-item:hover { background: var(--bg-hover); transform: translateX(2px); }
+    .leaderboard-rank {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .leaderboard-rank.top-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
+    .leaderboard-rank.top-2 { background: linear-gradient(135deg, #C0C0C0, #A9A9A9); color: #000; }
+    .leaderboard-rank.top-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); color: #000; }
+    .leaderboard-user { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+    .leaderboard-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .leaderboard-avatar svg { width: 16px; height: 16px; color: var(--text-tertiary); }
+    .leaderboard-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .leaderboard-name { font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .leaderboard-pnl { font-weight: 700; font-size: 0.95rem; font-family: 'SF Mono', monospace; text-align: right; min-width: 80px; }
+    .leaderboard-pnl.positive { color: var(--success); }
+    .leaderboard-pnl.negative { color: var(--danger); }
+
+    /* Market Data */
+    .market-data-container { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (min-width: 768px) { .market-data-container { grid-template-columns: 1fr 1fr; } }
+    .order-book, .recent-trades {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+    }
+    .order-book-header, .recent-trades-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .order-book-asks, .order-book-bids { display: flex; flex-direction: column; gap: 0.375rem; max-height: 280px; overflow-y: auto; }
+    .order-book-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      padding: 0.375rem 0;
+      font-size: 0.85rem;
+      font-family: 'SF Mono', monospace;
+    }
+    .order-book-row.ask { color: var(--danger); }
+    .order-book-row.bid { color: var(--success); }
+    .order-book-amount { background: var(--bg-tertiary); border-radius: 2px; padding: 0.125rem 0.375rem; text-align: right; }
+    .recent-trades-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 280px; overflow-y: auto; }
+    .trade-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      padding: 0.375rem 0;
+      font-size: 0.85rem;
+      font-family: 'SF Mono', monospace;
+    }
+    .trade-item.buy { color: var(--success); }
+    .trade-item.sell { color: var(--danger); }
+
+    /* Modals */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      padding: 1rem;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+    }
+    .modal.active { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      margin: auto;
+    }
+    .modal.active .modal-content { transform: translateY(0); }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 1;
+    }
+    .modal-title { font-weight: 700; font-size: 1.25rem; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.25rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      position: sticky;
+      bottom: 0;
+      background: var(--bg-card);
+    }
+
+    /* Admin Panel */
+    .admin-panel {
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .admin-panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent);
+    }
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .user-table th, .user-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .user-table th {
+      background: var(--bg-tertiary);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .user-table tr:hover { background: var(--bg-hover); }
+    .balance-input {
+      width: 100px;
+      padding: 0.4rem 0.6rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    .update-balance-btn {
+      padding: 0.4rem 0.8rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .update-balance-btn:hover { background: var(--accent-hover); }
+
+    /* Forgot Password */
+    .forgot-password-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .forgot-password-link:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 1199px) {
+      :root { --sidebar-width: 0; --sidebar-expanded: 280px; }
+      .sidebar { transform: translateX(-100%); width: var(--sidebar-expanded); z-index: 110; }
+      .sidebar.active { transform: translateX(0); }
+      .sidebar-toggle { display: flex; }
+      .main-content { margin-left: 0; width: 100%; overflow-y: auto; }
+      .sidebar.expanded + .main-content { margin-left: 0; width: 100%; }
+      .user-info { display: none; }
+      /* Show text labels on mobile when sidebar is expanded */
+      .sidebar.expanded .nav-text { display: block; }
+    }
+    @media (max-width: 767px) {
+      :root { --header-height: var(--mobile-header-height); --chart-min-height: var(--mobile-chart-height); }
+      .auth-card { padding: 1.75rem; margin: 0.5rem; }
+      .auth-title { font-size: 1.5rem; }
+      .form-control { padding: 0.75rem 1rem; }
+      .btn { padding: 0.8rem 1.25rem; font-size: 0.95rem; }
+      .header { padding: 0 1rem; }
+      .mobile-menu-toggle { display: flex; }
+      .pair-info { padding: 0.375rem 0.75rem; font-size: 0.9rem; }
+      .pair-price { font-size: 1.2rem; }
+      .page { padding: 1rem; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .page-actions { width: 100%; justify-content: space-between; }
+      .wallet-actions { grid-template-columns: 1fr; }
+      .trade-type { flex-direction: column; }
+      .notification-dropdown { width: calc(100vw - 2rem); right: 1rem; max-width: 400px; }
+      .dropdown-menu { min-width: 200px; right: -10px; }
+      .coin-list { height: 400px; }
+      .position-details { grid-template-columns: 1fr; gap: 0.375rem; }
+      .trading-panel { position: static; max-height: none; padding: 1rem; }
+      .panel-section { padding-bottom: 1rem; }
+      .chart-timeframes { width: 100%; justify-content: center; }
+      .timeframe-btn { padding: 0.3rem 0.5rem; font-size: 0.75rem; min-width: 38px; }
+      .user-table { font-size: 0.8rem; }
+      .user-table th, .user-table td { padding: 0.5rem; }
+      .balance-input { width: 80px; }
+    }
+    @media (max-width: 480px) {
+      .auth-logo { width: 48px; height: 48px; font-size: 1.3rem; }
+      .auth-title { font-size: 1.4rem; }
+      .coin-item { padding: 0.75rem 1rem; gap: 0.75rem; }
+      .coin-icon { width: 32px; height: 32px; font-size: 0.75rem; }
+      .coin-price, .coin-change { font-size: 0.9rem; min-width: 75px; }
+      .input-with-suffix input { padding-right: 3rem; }
+      .balance-amount { font-size: 1.05rem; }
+      .leaderboard-item { padding: 0.625rem; gap: 0.625rem; }
+      .leaderboard-name { font-size: 0.9rem; }
+      .leaderboard-pnl { font-size: 0.9rem; min-width: 70px; }
+      .order-book-row, .trade-item { grid-template-columns: 1fr 1fr; font-size: 0.8rem; }
+      .order-book-row span:last-child, .trade-item span:last-child { display: none; }
+      .wallet-actions { grid-template-columns: 1fr; }
+    }
+
+    /* Utility */
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-warning { color: var(--warning); }
+    .text-accent { color: var(--accent); }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.25rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .cursor-pointer { cursor: pointer; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    .overflow-auto { overflow-y: auto; }
+    .transition { transition: var(--transition); }
+    .backdrop-blur { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body>
+  <!-- Auth Pages -->
+  <div id="auth-container" class="auth-container">
+    <!-- Login Form -->
+    <div id="login-form" class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">NT</div>
+        <h1 class="auth-title">NexTrade Pro</h1>
+        <p class="auth-subtitle">Professional cryptocurrency trading platform</p>
+      </div>
+      
+      <div class="form-group">
+        <label for="login-email" class="form-label">Email Address</label>
+        <input type="email" id="login-email" class="form-control" placeholder="admin@nextrade.com" value="admin@nextrade.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="login-password" class="form-label">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="••••••••" value="admin123">
+      </div>
+      
+      <button id="login-btn" class="btn">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+      
+      <a class="forgot-password-link" id="forgot-password-link">Forgot password? Contact nexttrade@gmail.com</a>
+      
+      <div class="auth-switch">
+        New to NexTrade? <a id="show-register">Create an account</a>
+      </div>
+    </div>
+    
+    <!-- Register Form -->
+    <div id="register-form" class="auth-card hidden">
+      <div class="auth-header">
+        <div class="auth-logo">NT</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join thousands of traders worldwide</p>
+      </div>
+      
+      <div class="profile-upload">
+        <div class="profile-preview" id="profile-preview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <label class="profile-upload-btn">
+          <i class="fas fa-camera"></i> Add Photo
+          <input type="file" id="profile-upload" accept="image/*" class="hidden">
+        </label>
+      </div>
+      
+      <div class="form-group">
+        <label for="register-username" class="form-label">Username</label>
+        <input type="text" id="register-username" class="form-control" placeholder="Choose a username">
+      </div>
+      
+      <div class="form-group">
+        <label for="register-email" class="form-label">Email Address</label>
+        <input type="email" id="register-email" class="form-control" placeholder="your@email.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="register-password" class="form-label">Password</label>
+        <input type="password" id="register-password" class="form-control" placeholder="Create a strong password">
+      </div>
+      
+      <div class="form-group">
+        <label for="register-country" class="form-label">Country</label>
+        <select id="register-country" class="form-control">
+          <option value="">Select your country</option>
+          <option value="US">United States</option>
+          <option value="GB">United Kingdom</option>
+          <option value="CA">Canada</option>
+          <option value="AU">Australia</option>
+          <option value="DE">Germany</option>
+          <option value="FR">France</option>
+          <option value="JP">Japan</option>
+          <option value="KR">South Korea</option>
+          <option value="SG">Singapore</option>
+          <option value="IN">India</option>
+          <option value="BR">Brazil</option>
+          <option value="NG">Nigeria</option>
+          <option value="ZA">South Africa</option>
+        </select>
+      </div>
+      
+      <button id="register-btn" class="btn">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+      
+      <div class="auth-switch">
+        Already have an account? <a id="show-login">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app-container" class="app-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo">
+          <div class="logo-icon">NT</div>
+          <span class="nav-text">NexTrade Pro</span>
+        </a>
+        <button class="sidebar-toggle" id="sidebar-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <a class="nav-item active" data-page="markets">
+        <i class="fas fa-coins"></i>
+        <span class="nav-text">Markets</span>
+      </a>
+      <a class="nav-item" data-page="spot">
+        <i class="fas fa-exchange-alt"></i>
+        <span class="nav-text">Spot Trading</span>
+      </a>
+      <a class="nav-item" data-page="futures">
+        <i class="fas fa-chart-line"></i>
+        <span class="nav-text">Futures</span>
+      </a>
+      <a class="nav-item" data-page="wallet">
+        <i class="fas fa-wallet"></i>
+        <span class="nav-text">Wallet</span>
+      </a>
+      <a class="nav-item" data-page="leaderboard">
+        <i class="fas fa-trophy"></i>
+        <span class="nav-text">Leaderboard</span>
+      </a>
+      <a class="nav-item" id="admin-nav-item" data-page="admin" style="display: none;">
+        <i class="fas fa-user-shield"></i>
+        <span class="nav-text">Admin Panel</span>
+      </a>
+      
+      <div class="sidebar-footer">
+        <button class="theme-toggle" id="theme-toggle">
+          <i class="fas fa-moon"></i>
+          <span class="nav-text">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="pair-info">
+            <div>
+              <div class="pair-name">
+                <span id="current-pair-symbol">BTC</span>
+                <span class="pair-symbol">/USDT</span>
+              </div>
+            </div>
+            <div>
+              <div class="pair-price" id="current-price">$61,245.32</div>
+              <div class="pair-change positive" id="current-change">+2.34%</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button class="header-btn" id="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notification-badge">3</span>
+          </button>
+          
+          <div class="notification-dropdown" id="notification-dropdown">
+            <div class="notification-header">
+              <span>Notifications</span>
+              <span class="text-accent cursor-pointer text-sm" id="mark-all-read">Mark all read</span>
+            </div>
+            <div class="notification-list" id="notification-list"></div>
+          </div>
+          
+          <div class="user-menu">
+            <div class="user-avatar" id="user-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-info">
+              <div class="user-name" id="header-username">User</div>
+              <div class="user-balance" id="header-balance">$0.00</div>
+            </div>
+            <div class="dropdown-menu" id="user-dropdown">
+              <div class="dropdown-item" id="edit-profile">
+                <i class="fas fa-user-edit"></i> Edit Profile
+              </div>
+              <div class="dropdown-item" id="admin-deposit" style="display: none;">
+                <i class="fas fa-gift"></i> Admin Deposit
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item danger" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pages -->
+      <!-- Markets Page -->
+      <div id="markets-page" class="page active">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-coins"></i> Markets
+          </h1>
+          <div class="page-actions">
+            <button class="btn btn-sm btn-outline" id="refresh-prices">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        </div>
+        
+        <div class="markets-container">
+          <div class="coin-list">
+            <div class="coin-search">
+              <input type="text" class="form-control" id="coin-search" placeholder="Search coins...">
+            </div>
+            <div class="coin-tabs">
+              <div class="coin-tab active" data-filter="all">All</div>
+              <div class="coin-tab" data-filter="gainers">Gainers</div>
+              <div class="coin-tab" data-filter="losers">Losers</div>
+            </div>
+            <div class="coin-list-items" id="coin-list-items"></div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title" id="chart-title">
+                <span id="chart-pair-symbol">BTC</span>/USDT
+              </div>
+              <div class="chart-timeframes">
+                <button class="timeframe-btn" data-interval="1m">1m</button>
+                <button class="timeframe-btn" data-interval="5m">5m</button>
+                <button class="timeframe-btn" data-interval="15m">15m</button>
+                <button class="timeframe-btn active" data-interval="1h">1h</button>
+                <button class="timeframe-btn" data-interval="4h">4h</button>
+                <button class="timeframe-btn" data-interval="1d">1d</button>
+                <button class="timeframe-btn" data-interval="1w">1w</button>
+              </div>
+              <div class="chart-actions">
+                <button class="chart-btn" id="fullscreen-btn" title="Fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <div id="main-chart" class="tv-chart-container"></div>
+            </div>
+            
+            <!-- Market Data -->
+            <div class="market-data-container">
+              <div class="order-book">
+                <div class="order-book-header">
+                  <span>Order Book</span>
+                  <span class="text-xs text-secondary">BTC/USDT</span>
+                </div>
+                <div class="order-book-asks" id="order-book-asks"></div>
+                <div style="text-align: center; padding: 0.5rem; font-weight: 600; font-family: monospace;" id="order-book-price">$61,245.32</div>
+                <div class="order-book-bids" id="order-book-bids"></div>
+              </div>
+              
+              <div class="recent-trades">
+                <div class="recent-trades-header">
+                  <span>Recent Trades</span>
+                  <span class="text-xs text-secondary">Last 10</span>
+                </div>
+                <div class="recent-trades-list" id="recent-trades"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spot Trading Page -->
+      <div id="spot-page" class="page">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-exchange-alt"></i> Spot Trading
+          </h1>
+        </div>
+        
+        <div class="trading-container">
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title" id="spot-chart-title">
+                <span id="spot-pair-symbol">BTC</span>/USDT
+              </div>
+              <div class="chart-timeframes">
+                <button class="timeframe-btn" data-interval="1m">1m</button>
+                <button class="timeframe-btn" data-interval="5m">5m</button>
+                <button class="timeframe-btn" data-interval="15m">15m</button>
+                <button class="timeframe-btn active" data-interval="1h">1h</button>
+                <button class="timeframe-btn" data-interval="4h">4h</button>
+                <button class="timeframe-btn" data-interval="1d">1d</button>
+                <button class="timeframe-btn" data-interval="1w">1w</button>
+              </div>
+              <div class="chart-actions">
+                <button class="chart-btn" id="spot-fullscreen-btn" title="Fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <div id="spot-chart" class="tv-chart-container"></div>
+            </div>
+          </div>
+          
+          <div class="trading-panel">
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-coins"></i> Select Pair
+              </div>
+              <div class="coin-selector" id="spot-coin-selector"></div>
+            </div>
+            
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-exchange-alt"></i> Trade
+              </div>
+              
+              <div class="trade-type">
+                <button class="trade-btn buy active" id="spot-buy-btn">
+                  <i class="fas fa-arrow-up"></i> Buy
+                </button>
+                <button class="trade-btn sell" id="spot-sell-btn">
+                  <i class="fas fa-arrow-down"></i> Sell
+                </button>
+              </div>
+              
+              <div class="input-group">
+                <label>Amount (USDT)</label>
+                <div class="input-with-suffix">
+                  <input type="number" id="spot-amount" class="form-control" placeholder="0.00" min="0" step="0.01">
+                  <span class="input-suffix">USDT</span>
+                </div>
+              </div>
+              
+              <div class="balance-display">
+                <span class="balance-label">Available Balance</span>
+                <span class="balance-amount" id="spot-balance">0.00 USDT</span>
+              </div>
+              
+              <button class="btn" id="spot-execute-btn">
+                <i class="fas fa-bolt"></i> Execute Trade
+              </button>
+            </div>
+            
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-list"></i> Open Positions
+              </div>
+              <div class="positions-list" id="spot-positions"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Futures Trading Page -->
+      <div id="futures-page" class="page">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-chart-line"></i> Futures Trading
+          </h1>
+        </div>
+        
+        <div class="trading-container">
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title" id="futures-chart-title">
+                <span id="futures-pair-symbol">BTC</span>/USDT
+              </div>
+              <div class="chart-timeframes">
+                <button class="timeframe-btn" data-interval="1m">1m</button>
+                <button class="timeframe-btn" data-interval="5m">5m</button>
+                <button class="timeframe-btn" data-interval="15m">15m</button>
+                <button class="timeframe-btn active" data-interval="1h">1h</button>
+                <button class="timeframe-btn" data-interval="4h">4h</button>
+                <button class="timeframe-btn" data-interval="1d">1d</button>
+                <button class="timeframe-btn" data-interval="1w">1w</button>
+              </div>
+              <div class="chart-actions">
+                <button class="chart-btn" id="futures-fullscreen-btn" title="Fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <div id="futures-chart" class="tv-chart-container"></div>
+            </div>
+          </div>
+          
+          <div class="trading-panel">
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-coins"></i> Select Pair
+              </div>
+              <div class="coin-selector" id="futures-coin-selector"></div>
+            </div>
+            
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-chart-line"></i> Futures Trade
+              </div>
+              
+              <div class="trade-type">
+                <button class="trade-btn long active" id="futures-long-btn">
+                  <i class="fas fa-arrow-up"></i> Long
+                </button>
+                <button class="trade-btn short" id="futures-short-btn">
+                  <i class="fas fa-arrow-down"></i> Short
+                </button>
+              </div>
+              
+              <div class="input-group">
+                <label>Margin (USDT)</label>
+                <div class="input-with-suffix">
+                  <input type="number" id="futures-margin" class="form-control" placeholder="0.00" min="0" step="0.01">
+                  <span class="input-suffix">USDT</span>
+                </div>
+              </div>
+              
+              <div class="leverage-control">
+                <div class="leverage-header">
+                  <span>Leverage</span>
+                  <span id="leverage-display">10x</span>
+                </div>
+                <input type="range" min="1" max="125" value="10" class="leverage-slider" id="leverage-slider">
+                <div class="leverage-value">1x - 125x</div>
+              </div>
+              
+              <div class="balance-display">
+                <span class="balance-label">Available Margin</span>
+                <span class="balance-amount" id="futures-balance">0.00 USDT</span>
+              </div>
+              
+              <button class="btn" id="futures-execute-btn">
+                <i class="fas fa-bolt"></i> Open Position
+              </button>
+            </div>
+            
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-list"></i> Active Positions
+              </div>
+              <div class="positions-list" id="futures-positions"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallet Page -->
+      <div id="wallet-page" class="page">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-wallet"></i> Wallet
+          </h1>
+        </div>
+        
+        <div class="wallet-container">
+          <div class="wallet-card">
+            <div class="balance-card">
+              <div class="balance-label">Total Balance</div>
+              <div class="balance-total" id="wallet-total-balance">$0.00</div>
+              <div class="balance-currency">USDT</div>
+              
+              <div class="wallet-address">
+                <span id="wallet-address">0xDf483e7C8381CA283E797b63A00379AA93D25F5b</span>
+                <button class="copy-btn" id="copy-address" title="Copy address">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              
+              <div class="wallet-actions">
+                <button class="wallet-action-btn" id="transfer-funds">
+                  <i class="fas fa-exchange-alt"></i> Transfer
+                </button>
+                <button class="wallet-action-btn" id="view-history">
+                  <i class="fas fa-history"></i> History
+                </button>
+                <button class="wallet-action-btn" id="wallet-settings">
+                  <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="wallet-action-btn" id="wallet-security">
+                  <i class="fas fa-shield-alt"></i> Security
+                </button>
+              </div>
+            </div>
+            
+            <div class="panel-section">
+              <div class="panel-title">
+                <i class="fas fa-chart-line"></i> Deposit History
+              </div>
+              <div class="deposit-chart-container">
+                <canvas id="deposit-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="activity-log">
+            <div class="panel-title">
+              <i class="fas fa-clipboard-list"></i> Recent Activity
+            </div>
+            <div id="activity-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Page -->
+      <div id="leaderboard-page" class="page">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-trophy"></i> Leaderboard
+          </h1>
+          <div class="page-actions">
+            <select class="form-control" style="width: auto; padding: 0.5rem 1rem;" id="leaderboard-period">
+              <option value="24h">24 Hours</option>
+              <option value="7d" selected>7 Days</option>
+              <option value="30d">30 Days</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="markets-container">
+          <div class="leaderboard-container">
+            <div class="leaderboard-header">
+              <div class="leaderboard-title">
+                <i class="fas fa-crown text-warning"></i> Top Traders
+              </div>
+              <span class="leaderboard-period">7 Days</span>
+            </div>
+            <div class="leaderboard-list" id="leaderboard-list"></div>
+          </div>
+          
+          <div class="chart-container">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fas fa-chart-bar"></i> Performance Analytics
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <div id="analytics-chart" class="tv-chart-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Panel Page -->
+      <div id="admin-page" class="page">
+        <div class="page-header">
+          <h1 class="page-title">
+            <i class="fas fa-user-shield"></i> Admin Control Panel
+          </h1>
+        </div>
+        
+        <div class="admin-panel">
+          <div class="admin-panel-title">
+            <i class="fas fa-users"></i> User Management
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Country</th>
+                  <th>Balance (USDT)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-list">
+                <!-- Users will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Chart Modal -->
+  <div class="fullscreen-chart" id="fullscreen-chart-container">
+    <div class="fullscreen-header">
+      <div class="chart-title" id="fullscreen-chart-title">
+        <span id="fullscreen-pair-symbol">BTC</span>/USDT
+      </div>
+      <button class="fullscreen-exit" id="fullscreen-exit">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div id="fullscreen-chart" style="flex: 1; min-height: 0; width: 100%;"></div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div class="modal" id="profile-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Edit Profile</div>
+        <button class="modal-close" id="close-profile-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-upload" style="margin-bottom: 1.5rem; padding: 1rem;">
+          <div class="profile-preview" id="edit-profile-preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <label class="profile-upload-btn">
+            <i class="fas fa-camera"></i> Change Photo
+            <input type="file" id="edit-profile-upload" accept="image/*" class="hidden">
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-username" class="form-label">Username</label>
+          <input type="text" id="edit-username" class="form-control" placeholder="Enter new username">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-country" class="form-label">Country</label>
+          <select id="edit-country" class="form-control">
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="JP">Japan</option>
+            <option value="KR">South Korea</option>
+            <option value="SG">Singapore</option>
+            <option value="IN">India</option>
+            <option value="BR">Brazil</option>
+            <option value="NG">Nigeria</option>
+            <option value="ZA">South Africa</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-profile-edit">Cancel</button>
+        <button class="btn" id="save-profile">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div class="modal" id="transfer-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Transfer Funds</div>
+        <button class="modal-close" id="close-transfer-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="transfer-recipient" class="form-label">Recipient Username</label>
+          <input type="text" id="transfer-recipient" class="form-control" placeholder="Enter username">
+        </div>
+        
+        <div class="form-group">
+          <label for="transfer-amount" class="form-label">Amount (USDT)</label>
+          <div class="input-with-suffix">
+            <input type="number" id="transfer-amount" class="form-control" placeholder="0.00" min="0" step="0.01">
+            <span class="input-suffix">USDT</span>
+          </div>
+        </div>
+        
+        <div class="balance-display">
+          <span class="balance-label">Available Balance</span>
+          <span class="balance-amount" id="transfer-balance">0.00 USDT</span>
+        </div>
+        
+        <div class="text-xs text-secondary mt-2">
+          <i class="fas fa-info-circle"></i> Transfers are instant and cannot be reversed
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-transfer">Cancel</button>
+        <button class="btn" id="execute-transfer">Send Funds</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Deposit Modal -->
+  <div class="modal" id="admin-deposit-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Admin Deposit</div>
+        <button class="modal-close" id="close-admin-deposit-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="deposit-username" class="form-label">Recipient Username</label>
+          <input type="text" id="deposit-username" class="form-control" placeholder="Enter username">
+        </div>
+        
+        <div class="form-group">
+          <label for="admin-deposit-amount" class="form-label">Amount (USDT)</label>
+          <div class="input-with-suffix">
+            <input type="number" id="admin-deposit-amount" class="form-control" placeholder="0.00" min="0" step="0.01">
+            <span class="input-suffix">USDT</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="deposit-note" class="form-label">Note (Optional)</label>
+          <textarea id="deposit-note" class="form-control" rows="3" placeholder="Add a note for the user"></textarea>
+        </div>
+        
+        <div class="text-xs text-secondary mt-2">
+          <i class="fas fa-shield-alt"></i> Only administrators can deposit funds to user accounts
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-admin-deposit">Cancel</button>
+        <button class="btn" id="submit-admin-deposit">Deposit Funds</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal" id="forgot-password-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Password Reset</div>
+        <button class="modal-close" id="close-forgot-password-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          To reset your password, please contact our support team at:
+        </p>
+        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center; margin-bottom: 1rem;">
+          <strong style="color: var(--accent); font-size: 1.1rem;">nexttrade@gmail.com</strong>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+          Include your registered email address in your message and our team will assist you with password recovery within 24 hours.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="close-forgot-password-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== GLOBAL STATE ====================
+    const state = {
+      currentUser: null,
+      currentPair: 'BTCUSDT',
+      currentInterval: '1h',
+      coins: [],
+      prices: {},
+      charts: {},
+      positions: { spot: [], futures: [] },
+      notifications: [],
+      activityLog: [],
+      depositHistory: [],
+      users: [],
+      leaderboard: [],
+      adminEmail: 'admin@nextrade.com',
+      adminPassword: 'admin123',
+      walletAddress: '0xDf483e7C8381CA283E797b63A00379AA93D25F5b',
+      topCoins: ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'TRX', 'LINK', 'AVAX', 'DOT', 'MATIC'],
+      allCoins: [
+        'BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'TRX', 'LINK', 'AVAX', 
+        'DOT', 'MATIC', 'SHIB', 'LTC', 'UNI', 'ATOM', 'XLM', 'FIL', 'ETC', 'XMR', 
+        'APT', 'ARB', 'NEAR', 'VET', 'ALGO', 'ICP', 'SAND', 'MANA', 'AXS', 'EGLD', 
+        'THETA', 'FTM', 'GRT', 'FLOW', 'INJ', 'SUI', 'RNDR', 'IMX', 'GALA', 'MINA',
+        'AAVE', 'MKR', 'SNX', 'CRV', 'COMP', 'YFI', 'SUSHI', '1INCH', 'BAL', 'REN',
+        'KNC', 'ZRX', 'LRC', 'BAND', 'STORJ', 'ANT', 'NMR', 'MLN', 'REP', 'BAT',
+        'ZEC', 'DASH', 'XEM', 'QTUM', 'ONT', 'ZIL', 'ICX', 'IOST', 'WAVES', 'LSK',
+        'NANO', 'DGB', 'SC', 'DCR', 'RVN', 'HOT', 'ENJ', 'CHZ', 'WIN', 'BTT',
+        'STMX', 'DENT', 'CELR', 'ONE', 'FTT', 'OKB', 'HT', 'LEO', 'CRO', 'KCS',
+        'GT', 'BGB', 'MX', 'WBT', 'XTZ', 'EOS', 'BSV', 'NEO', 'IOTA', 'OMG',
+        'ZEN', 'KAVA', 'RUNE', 'ALPHA', 'BETA', 'TLM', 'SFP', 'DYDX', 'GMT', 'APE'
+      ],
+      // SVG Icons for coins
+      coinIcons: {
+        'BTC': `<svg viewBox="0 0 24 24" fill="none" stroke="#f7931a" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-1.67v-1.89c-1.09-.11-2.17-.45-2.84-.89l.73-1.48c.75.47 1.81.82 2.71.82 1.06 0 1.64-.45 1.64-1.13 0-.63-.47-1.02-1.61-1.38-1.58-.51-2.72-1.28-2.72-2.82 0-1.38.93-2.43 2.53-2.71V6.5h1.67v1.86c.83.1 1.58.32 2.17.64l-.68 1.51c-.68-.36-1.53-.67-2.41-.67-.97 0-1.49.41-1.49 1.03 0 .58.44.92 1.73 1.33 1.67.54 2.59 1.35 2.59 2.87-.01 1.42-.98 2.56-2.65 2.82z"/></svg>`,
+        'ETH': `<svg viewBox="0 0 24 24" fill="none" stroke="#627eea" stroke-width="1.5"><path d="M12 2L4.5 12.5 12 17l7.5-4.5L12 2zm0 15.5L4.5 13 12 18.5 19.5 13 12 17.5z"/></svg>`,
+        'BNB': `<svg viewBox="0 0 24 24" fill="#f3ba2f"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.5L18.5 8 12 11.5 5.5 8 12 4.5zM4.5 9.5L11 13v6.5l-6.5-3.5V9.5zm15 0v6.5L13 19.5V13l6.5-3.5z"/></svg>`,
+        'SOL': `<svg viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="1.5"><path d="M4 12h16M4 8h16M4 16h16"/></svg>`,
+        'XRP': `<svg viewBox="0 0 24 24" fill="none" stroke="#23292f" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 8l8 8M16 8l-8 8"/></svg>`,
+        'ADA': `<svg viewBox="0 0 24 24" fill="none" stroke="#0033ad" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>`,
+        'DOGE': `<svg viewBox="0 0 24 24" fill="#c2a673"><circle cx="12" cy="12" r="10"/><circle cx="9" cy="10" r="2" fill="#000"/><circle cx="15" cy="10" r="2" fill="#000"/><path d="M8 15q4 3 8 0" stroke="#000" stroke-width="1.5" fill="none"/></svg>`,
+      }
+    };
+
+    // ==================== UTILITY FUNCTIONS ====================
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => document.querySelectorAll(selector);
+    
+    const formatPrice = (price) => {
+      if (price >= 1000) return '$' + price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (price >= 1) return '$' + price.toFixed(2);
+      if (price >= 0.01) return '$' + price.toFixed(4);
+      return '$' + price.toFixed(6);
+    };
+    
+    const formatPercent = (percent) => {
+      const sign = percent >= 0 ? '+' : '';
+      return sign + percent.toFixed(2) + '%';
+    };
+    
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    };
+    
+    const formatRelativeTime = (timestamp) => {
+      const now = Date.now();
+      const diff = now - timestamp;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return `${days}d ago`;
+    };
+    
+    const generateId = () => Math.random().toString(36).substr(2, 9);
+    
+    const saveToLocalStorage = (key, value) => {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    };
+    
+    const loadFromLocalStorage = (key, defaultValue = null) => {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+      } catch (e) { return defaultValue; }
+    };
+    
+    const showNotification = (title, message, type = 'info') => {
+      const notification = { id: generateId(), title, message, type, time: Date.now(), read: false };
+      state.notifications.unshift(notification);
+      saveToLocalStorage('notifications', state.notifications);
+      renderNotifications();
+    };
+    
+    const logActivity = (action, details) => {
+      const activity = { id: generateId(), action, details, time: Date.now(), userId: state.currentUser?.id };
+      state.activityLog.unshift(activity);
+      saveToLocalStorage('activityLog', state.activityLog);
+      renderActivityLog();
+    };
+    
+    const getCoinIcon = (symbol) => {
+      if (state.coinIcons[symbol]) return state.coinIcons[symbol];
+      // Fallback: First letter in a circle
+      const firstLetter = symbol.charAt(0);
+      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">${firstLetter}</text></svg>`;
+    };
+    
+    const updateTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      const toggleBtn = $('#theme-toggle');
+      const icon = toggleBtn.querySelector('i');
+      const text = toggleBtn.querySelector('.nav-text');
+      if (theme === 'light') {
+        icon.className = 'fas fa-sun';
+        text.textContent = 'Light Mode';
+      } else {
+        icon.className = 'fas fa-moon';
+        text.textContent = 'Dark Mode';
+      }
+      saveToLocalStorage('theme', theme);
+      // Reload charts with new theme
+      setTimeout(() => { initAllCharts(); }, 100);
+    };
+
+    // ==================== AUTHENTICATION ====================
+    const initAuth = () => {
+      // Load theme
+      const savedTheme = loadFromLocalStorage('theme', 'dark');
+      updateTheme(savedTheme);
+      
+      // Load users
+      state.users = loadFromLocalStorage('users', []);
+      
+      // Create admin if not exists
+      if (!state.users.find(u => u.email === state.adminEmail)) {
+        state.users.push({
+          id: 'admin', username: 'Admin', email: state.adminEmail, password: state.adminPassword,
+          country: 'US', profilePicture: null, balance: 100000, createdAt: Date.now(),
+          isAdmin: true, totalPnl: 0, tradesCount: 0, wallet: { USDT: 100000 }
+        });
+        saveToLocalStorage('users', state.users);
+      }
+      
+      // Check for saved session (prevent multiple accounts per device)
+      const savedUser = loadFromLocalStorage('currentUser');
+      const deviceFingerprint = navigator.userAgent + screen.width + screen.height;
+      const registeredDevices = loadFromLocalStorage('registeredDevices', {});
+      
+      if (savedUser && savedUser.id && !registeredDevices[deviceFingerprint]) {
+        const user = state.users.find(u => u.id === savedUser.id);
+        if (user) {
+          state.currentUser = user;
+          registeredDevices[deviceFingerprint] = user.id;
+          saveToLocalStorage('registeredDevices', registeredDevices);
+          showApp();
+        }
+      }
+      
+      // Login
+      $('#login-btn').addEventListener('click', handleLogin);
+      $('#show-register').addEventListener('click', () => {
+        $('#login-form').classList.add('hidden');
+        $('#register-form').classList.remove('hidden');
+      });
+      
+      // Register
+      $('#register-btn').addEventListener('click', handleRegister);
+      $('#show-login').addEventListener('click', () => {
+        $('#register-form').classList.add('hidden');
+        $('#login-form').classList.remove('hidden');
+      });
+      
+      // Profile upload
+      $('#profile-upload').addEventListener('change', handleProfileUpload);
+      $('#edit-profile-upload').addEventListener('change', handleEditProfileUpload);
+      
+      // Theme toggle
+      $('#theme-toggle').addEventListener('click', toggleTheme);
+      
+      // Forgot password
+      $('#forgot-password-link').addEventListener('click', () => {
+        $('#forgot-password-modal').classList.add('active');
+      });
+      $('#close-forgot-password-btn').addEventListener('click', () => {
+        $('#forgot-password-modal').classList.remove('active');
+      });
+      $('#close-forgot-password-modal').addEventListener('click', () => {
+        $('#forgot-password-modal').classList.remove('active');
+      });
+    };
+    
+    const handleLogin = () => {
+      const email = $('#login-email').value.trim();
+      const password = $('#login-password').value;
+      if (!email || !password) { showNotification('Error', 'Please fill in all fields', 'danger'); return; }
+      
+      const user = state.users.find(u => u.email === email && u.password === password);
+      if (user) {
+        state.currentUser = user;
+        saveToLocalStorage('currentUser', user);
+        // Register device
+        const deviceFingerprint = navigator.userAgent + screen.width + screen.height;
+        const registeredDevices = loadFromLocalStorage('registeredDevices', {});
+        registeredDevices[deviceFingerprint] = user.id;
+        saveToLocalStorage('registeredDevices', registeredDevices);
+        showApp();
+        showNotification('Welcome back!', `Signed in as ${user.username}`, 'success');
+        logActivity('Login', `User logged in from ${navigator.platform}`);
+      } else {
+        showNotification('Error', 'Invalid email or password', 'danger');
+      }
+    };
+    
+    const handleRegister = () => {
+      const username = $('#register-username').value.trim();
+      const email = $('#register-email').value.trim();
+      const password = $('#register-password').value;
+      const country = $('#register-country').value;
+      
+      if (!username || !email || !password || !country) {
+        showNotification('Error', 'Please fill in all fields', 'danger'); return;
+      }
+      if (state.users.find(u => u.email === email)) {
+        showNotification('Error', 'Email already registered', 'danger'); return;
+      }
+      // Prevent multiple accounts per device
+      const deviceFingerprint = navigator.userAgent + screen.width + screen.height;
+      const registeredDevices = loadFromLocalStorage('registeredDevices', {});
+      if (registeredDevices[deviceFingerprint]) {
+        showNotification('Error', 'One account per device. Please login or contact support.', 'danger'); return;
+      }
+      
+      const newUser = {
+        id: generateId(), username, email, password, country, profilePicture: null,
+        balance: 0, createdAt: Date.now(), isAdmin: false, totalPnl: 0, tradesCount: 0,
+        wallet: { USDT: 0 } // Initialize wallet with USDT
+      };
+      state.users.push(newUser);
+      saveToLocalStorage('users', state.users);
+      state.currentUser = newUser;
+      saveToLocalStorage('currentUser', newUser);
+      // Register device
+      registeredDevices[deviceFingerprint] = newUser.id;
+      saveToLocalStorage('registeredDevices', registeredDevices);
+      
+      showApp();
+      showNotification('Account created!', 'Welcome to NexTrade Pro!', 'success');
+      logActivity('Register', 'New user account created');
+    };
+    
+    const handleProfileUpload = (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => { $('#profile-preview').innerHTML = `<img src="${event.target.result}" alt="Profile">`; };
+        reader.readAsDataURL(file);
+      }
+    };
+    
+    const handleEditProfileUpload = (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => { $('#edit-profile-preview').innerHTML = `<img src="${event.target.result}" alt="Profile">`; };
+        reader.readAsDataURL(file);
+      }
+    };
+    
+    const handleLogout = () => {
+      state.currentUser = null;
+      localStorage.removeItem('currentUser');
+      showAuth();
+      showNotification('Logged out', 'You have been signed out successfully', 'info');
+      $$('.modal').forEach(modal => modal.classList.remove('active'));
+      $$('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+    };
+    
+    const toggleTheme = () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      updateTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    };
+
+    // ==================== CHARTS (Lightweight-Charts) ====================
+    const initAllCharts = () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const chartOptions = {
+        layout: {
+          background: { color: isDark ? '#0b0e11' : '#ffffff' },
+          textColor: isDark ? '#848e9c' : '#1a1b1e',
+        },
+        grid: {
+          vertLines: { color: isDark ? '#2b3139' : '#e9ecef' },
+          horzLines: { color: isDark ? '#2b3139' : '#e9ecef' },
+        },
+        crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+        priceScale: { borderColor: isDark ? '#2b3139' : '#e9ecef', autoScale: true },
+        timeScale: { borderColor: isDark ? '#2b3139' : '#e9ecef', timeVisible: true, secondsVisible: false },
+        handleScroll: { mouseWheel: true, pressedMouseMove: true },
+        handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
+      };
+      
+      const createChart = (containerId, chartKey) => {
+        const container = $(containerId);
+        if (!container) return;
+        
+        // Clear container
+        container.innerHTML = '';
+        
+        const width = container.clientWidth || 600;
+        const height = container.clientHeight || 400;
+        
+        const chart = LightweightCharts.createChart(container, { ...chartOptions, width, height });
+        const candleSeries = chart.addCandlestickSeries({
+          upColor: '#0ecb81', downColor: '#f6465d', borderVisible: false,
+          wickUpColor: '#0ecb81', wickDownColor: '#f6465d',
+        });
+        
+        state.charts[chartKey] = { chart, series: candleSeries };
+        
+        // Generate simulated data
+        generateCandleData(candleSeries, state.currentPair, state.currentInterval);
+        
+        // Handle resize
+        const resizeObserver = new ResizeObserver(entries => {
+          if (entries[0]) {
+            const { width, height } = entries[0].contentRect;
+            if (width > 0 && height > 0) chart.resize(width, height);
+          }
+        });
+        resizeObserver.observe(container);
+      };
+      
+      createChart('#main-chart', 'main');
+      createChart('#spot-chart', 'spot');
+      createChart('#futures-chart', 'futures');
+      createChart('#analytics-chart', 'analytics');
+    };
+    
+    const generateCandleData = (series, symbol, interval) => {
+      const now = Math.floor(Date.now() / 1000);
+      const intervalSeconds = { '1m': 60, '5m': 300, '15m': 900, '1h': 3600, '4h': 14400, '1d': 86400, '1w': 604800 };
+      const seconds = intervalSeconds[interval] || 3600;
+      const basePrice = state.prices[symbol.replace('USDT', '')] || 60000;
+      
+      const candles = [];
+      let price = basePrice * 0.95;
+      
+      for (let i = 100; i >= 0; i--) {
+        const time = now - (i * seconds);
+        const volatility = basePrice * 0.02;
+        const open = price;
+        const close = open + (Math.random() - 0.48) * volatility;
+        const high = Math.max(open, close) + Math.random() * volatility * 0.5;
+        const low = Math.min(open, close) - Math.random() * volatility * 0.5;
+        candles.push({ time, open: parseFloat(open.toFixed(2)), high: parseFloat(high.toFixed(2)), low: parseFloat(low.toFixed(2)), close: parseFloat(close.toFixed(2)) });
+        price = close;
+      }
+      series.setData(candles);
+    };
+
+    // ==================== APP NAVIGATION ====================
+    const showAuth = () => {
+      $('#auth-container').style.display = 'flex';
+      $('#app-container').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
+    
+    const showApp = () => {
+      $('#auth-container').style.display = 'none';
+      $('#app-container').style.display = 'flex';
+      document.body.style.overflow = 'auto';
+      
+      loadAppData();
+      initNavigation();
+      initAllCharts();
+      initEventListeners();
+      startPriceUpdates();
+      
+      renderCoinList();
+      renderNotifications();
+      renderActivityLog();
+      renderPositions();
+      renderWallet();
+      renderLeaderboard();
+      renderOrderBook();
+      renderRecentTrades();
+      renderAdminPanel();
+      updateUserDisplay();
+      
+      if (state.currentUser?.isAdmin) {
+        $('#admin-deposit').style.display = 'flex';
+        $('#admin-nav-item').style.display = 'flex';
+      }
+    };
+    
+    const initNavigation = () => {
+      $('#mobile-menu-toggle').addEventListener('click', () => { $('#sidebar').classList.add('active'); });
+      $('#sidebar-close').addEventListener('click', () => { $('#sidebar').classList.remove('active'); });
+      
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 992 && !e.target.closest('.sidebar') && !e.target.closest('#mobile-menu-toggle') && $('#sidebar').classList.contains('active')) {
+          $('#sidebar').classList.remove('active');
+        }
+      });
+      
+      $$('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          $$('.nav-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          const pageId = item.dataset.page + '-page';
+          $$('.page').forEach(page => page.classList.remove('active'));
+          $(`#${pageId}`).classList.add('active');
+          if (window.innerWidth <= 992) $('#sidebar').classList.remove('active');
+          // Reload charts after page switch
+          setTimeout(() => { initAllCharts(); }, 200);
+        });
+      });
+      
+      $('#user-avatar').addEventListener('click', (e) => {
+        e.stopPropagation();
+        $('#user-dropdown').classList.toggle('show');
+        $('#notification-dropdown').classList.remove('show');
+      });
+      
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-menu')) $('#user-dropdown').classList.remove('show');
+        if (!e.target.closest('#notification-btn')) $('#notification-dropdown').classList.remove('show');
+      });
+      
+      $('#notification-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        $('#notification-dropdown').classList.toggle('show');
+        $('#user-dropdown').classList.remove('show');
+        state.notifications.forEach(n => n.read = true);
+        saveToLocalStorage('notifications', state.notifications);
+        updateNotificationBadge();
+      });
+      
+      $('#edit-profile').addEventListener('click', () => {
+        $('#edit-username').value = state.currentUser.username;
+        $('#edit-country').value = state.currentUser.country;
+        if (state.currentUser.profilePicture) $('#edit-profile-preview').innerHTML = `<img src="${state.currentUser.profilePicture}" alt="Profile">`;
+        $('#profile-modal').classList.add('active');
+      });
+      
+      $('#admin-deposit').addEventListener('click', () => { $('#admin-deposit-modal').classList.add('active'); });
+      $('#logout-btn').addEventListener('click', handleLogout);
+      
+      $$('.modal-close').forEach(btn => { btn.addEventListener('click', () => { btn.closest('.modal').classList.remove('active'); }); });
+      $$('.btn-outline').forEach(btn => { if (!['cancel-profile-edit', 'cancel-transfer', 'cancel-admin-deposit'].includes(btn.id)) btn.addEventListener('click', () => { btn.closest('.modal')?.classList.remove('active'); }); });
+      $$('.modal').forEach(modal => { modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); }); });
+    };
+    
+    const initEventListeners = () => {
+      $('#coin-search').addEventListener('input', (e) => { renderCoinList(e.target.value.toLowerCase()); });
+      
+      $$('.coin-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          $$('.coin-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderCoinList($('#coin-search').value.toLowerCase(), tab.dataset.filter);
+        });
+      });
+      
+      $$('.chart-timeframes').forEach(container => {
+        container.querySelectorAll('.timeframe-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            container.querySelectorAll('.timeframe-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.currentInterval = btn.dataset.interval;
+            initAllCharts();
+          });
+        });
+      });
+      
+      const setupFullscreen = (btnId) => {
+        $(btnId)?.addEventListener('click', () => {
+          $(`#fullscreen-pair-symbol`).textContent = state.currentPair.replace('USDT', '');
+          $('#fullscreen-chart-container').classList.add('active');
+          setTimeout(() => {
+            const container = $('#fullscreen-chart');
+            if (container) {
+              container.innerHTML = '';
+              const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+              const chart = LightweightCharts.createChart(container, {
+                layout: { background: { color: isDark ? '#0b0e11' : '#ffffff' }, textColor: isDark ? '#848e9c' : '#1a1b1e' },
+                grid: { vertLines: { color: isDark ? '#2b3139' : '#e9ecef' }, horzLines: { color: isDark ? '#2b3139' : '#e9ecef' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                priceScale: { borderColor: isDark ? '#2b3139' : '#e9ecef', autoScale: true },
+                timeScale: { borderColor: isDark ? '#2b3139' : '#e9ecef', timeVisible: true, secondsVisible: false },
+                width: container.clientWidth || window.innerWidth - 40,
+                height: container.clientHeight || window.innerHeight - 100,
+              });
+              const candleSeries = chart.addCandlestickSeries({ upColor: '#0ecb81', downColor: '#f6465d', borderVisible: false, wickUpColor: '#0ecb81', wickDownColor: '#f6465d' });
+              generateCandleData(candleSeries, state.currentPair, state.currentInterval);
+            }
+          }, 100);
+        });
+      };
+      
+      setupFullscreen('#fullscreen-btn');
+      setupFullscreen('#spot-fullscreen-btn');
+      setupFullscreen('#futures-fullscreen-btn');
+      
+      $('#fullscreen-exit').addEventListener('click', () => { $('#fullscreen-chart-container').classList.remove('active'); });
+      $('#leverage-slider').addEventListener('input', (e) => { $('#leverage-display').textContent = `${e.target.value}x`; });
+      
+      $('#spot-buy-btn').addEventListener('click', () => { $$('.trade-btn').forEach(btn => btn.classList.remove('active')); $('#spot-buy-btn').classList.add('active'); });
+      $('#spot-sell-btn').addEventListener('click', () => { $$('.trade-btn').forEach(btn => btn.classList.remove('active')); $('#spot-sell-btn').classList.add('active'); });
+      $('#spot-execute-btn').addEventListener('click', () => { executeSpotTrade($('#spot-buy-btn').classList.contains('active') ? 'buy' : 'sell'); });
+      
+      $('#futures-long-btn').addEventListener('click', () => { $$('.trade-btn').forEach(btn => btn.classList.remove('active')); $('#futures-long-btn').classList.add('active'); });
+      $('#futures-short-btn').addEventListener('click', () => { $$('.trade-btn').forEach(btn => btn.classList.remove('active')); $('#futures-short-btn').classList.add('active'); });
+      $('#futures-execute-btn').addEventListener('click', () => { executeFuturesTrade($('#futures-long-btn').classList.contains('active') ? 'long' : 'short'); });
+      
+      $('#copy-address').addEventListener('click', () => { navigator.clipboard.writeText(state.walletAddress); showNotification('Address copied!', 'Wallet address copied to clipboard', 'success'); });
+      
+      // Wallet action buttons - NOW VISIBLE AND WORKING
+      $('#transfer-funds').addEventListener('click', () => {
+        $('#transfer-balance').textContent = `${(state.currentUser?.balance || 0).toFixed(2)} USDT`;
+        $('#transfer-modal').classList.add('active');
+      });
+      $('#view-history').addEventListener('click', () => {
+        showNotification('History', 'Transaction history feature coming soon', 'info');
+      });
+      $('#wallet-settings').addEventListener('click', () => {
+        showNotification('Settings', 'Wallet settings feature coming soon', 'info');
+      });
+      $('#wallet-security').addEventListener('click', () => {
+        showNotification('Security', 'Security settings feature coming soon', 'info');
+      });
+      
+      $('#execute-transfer').addEventListener('click', handleTransfer);
+      $('#submit-admin-deposit').addEventListener('click', handleAdminDeposit);
+      $('#save-profile').addEventListener('click', saveProfile);
+      
+      $('#mark-all-read').addEventListener('click', () => {
+        state.notifications.forEach(n => n.read = true);
+        saveToLocalStorage('notifications', state.notifications);
+        renderNotifications();
+        updateNotificationBadge();
+      });
+      
+      $('#refresh-prices').addEventListener('click', () => { fetchPrices(); showNotification('Prices refreshed', 'Latest market data loaded', 'success'); });
+      
+      $('#leaderboard-period').addEventListener('change', (e) => {
+        renderLeaderboard(e.target.value);
+        $$('.leaderboard-period').forEach(el => el.textContent = e.target.value === '24h' ? '24 Hours' : e.target.value === '7d' ? '7 Days' : e.target.value === '30d' ? '30 Days' : 'All Time');
+      });
+    };
+
+    // ==================== DATA LOADING ====================
+    const loadAppData = () => {
+      state.positions = loadFromLocalStorage('positions', { spot: [], futures: [] });
+      state.notifications = loadFromLocalStorage('notifications', []);
+      state.activityLog = loadFromLocalStorage('activityLog', []);
+      state.depositHistory = loadFromLocalStorage('depositHistory', []);
+      state.leaderboard = loadFromLocalStorage('leaderboard', []);
+      
+      state.coins = state.allCoins.map(symbol => ({
+        symbol, name: getCoinName(symbol), icon: getCoinIcon(symbol), price: 0, change24h: 0, volume24h: 0
+      }));
+      
+      fetchPrices();
+      if (state.leaderboard.length === 0) generateInitialLeaderboard();
+    };
+    
+    const getCoinName = (symbol) => {
+      const names = {
+        'BTC': 'Bitcoin', 'ETH': 'Ethereum', 'BNB': 'BNB', 'SOL': 'Solana',
+        'XRP': 'XRP', 'ADA': 'Cardano', 'DOGE': 'Dogecoin', 'TRX': 'TRON',
+        'LINK': 'Chainlink', 'AVAX': 'Avalanche', 'DOT': 'Polkadot', 'MATIC': 'Polygon',
+        'SHIB': 'Shiba Inu', 'LTC': 'Litecoin', 'UNI': 'Uniswap', 'ATOM': 'Cosmos',
+        'XLM': 'Stellar', 'FIL': 'Filecoin', 'ETC': 'Ethereum Classic', 'XMR': 'Monero',
+        'APT': 'Aptos', 'ARB': 'Arbitrum', 'NEAR': 'NEAR Protocol', 'VET': 'VeChain',
+        'ALGO': 'Algorand', 'ICP': 'Internet Computer', 'SAND': 'The Sandbox',
+        'MANA': 'Decentraland', 'AXS': 'Axie Infinity', 'EGLD': 'MultiversX',
+        'THETA': 'Theta Network', 'FTM': 'Fantom', 'GRT': 'The Graph', 'FLOW': 'Flow',
+        'INJ': 'Injective', 'SUI': 'Sui', 'RNDR': 'Render Token', 'IMX': 'Immutable X',
+        'GALA': 'Gala', 'MINA': 'Mina Protocol'
+      };
+      return names[symbol] || symbol;
+    };
+    
+    const generateInitialLeaderboard = () => {
+      const sampleUsers = state.users.filter(u => !u.isAdmin).slice(0, 10);
+      state.leaderboard = sampleUsers.map((user, index) => ({
+        userId: user.id, username: user.username, profilePicture: user.profilePicture,
+        totalPnl: (Math.random() - 0.3) * 5000, tradesCount: Math.floor(Math.random() * 100) + 10,
+        winRate: 40 + Math.random() * 40, rank: index + 1
+      }));
+      state.leaderboard.sort((a, b) => b.totalPnl - a.totalPnl);
+      state.leaderboard.forEach((item, index) => item.rank = index + 1);
+      saveToLocalStorage('leaderboard', state.leaderboard);
+    };
+    
+    const fetchPrices = async () => {
+      try {
+        const batchSize = 20;
+        for (let i = 0; i < state.allCoins.length; i += batchSize) {
+          const batch = state.allCoins.slice(i, i + batchSize);
+          const symbols = batch.map(c => `${c}USDT`);
+          const pricePromises = symbols.map(symbol => 
+            fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`).then(res => res.json()).catch(() => null)
+          );
+          const results = await Promise.all(pricePromises);
+          results.forEach((data, index) => {
+            if (data && data.symbol) {
+              const symbol = data.symbol.replace('USDT', '');
+              state.prices[symbol] = parseFloat(data.price);
+              const coin = state.coins.find(c => c.symbol === symbol);
+              if (coin) { coin.price = state.prices[symbol]; coin.change24h = (Math.random() - 0.45) * 8; coin.volume24h = Math.random() * 1000000 + 10000; }
+            }
+          });
+          if (i + batchSize < state.allCoins.length) await new Promise(resolve => setTimeout(resolve, 300));
+        }
+        renderCoinList();
+        updateHeaderPrice();
+        updateOrderBook();
+        updateRecentTrades();
+      } catch (error) {
+        simulatePrices();
+      }
+    };
+    
+    const simulatePrices = () => {
+      state.coins.forEach(coin => {
+        if (coin.price === 0) {
+          const basePrices = { 'BTC': 61000, 'ETH': 3000, 'BNB': 550, 'SOL': 140, 'XRP': 0.55, 'ADA': 0.45, 'DOGE': 0.12, 'TRX': 0.11, 'LINK': 14, 'AVAX': 35, 'DOT': 7, 'MATIC': 0.8, 'SHIB': 0.00002, 'LTC': 85, 'UNI': 10 };
+          coin.price = basePrices[coin.symbol] || (Math.random() * 100 + 1);
+        }
+        coin.price = Math.max(0.000001, coin.price * (1 + (Math.random() - 0.49) * 0.008));
+        coin.change24h = (Math.random() - 0.45) * 8;
+        coin.volume24h = Math.random() * 1000000 + 10000;
+        state.prices[coin.symbol] = coin.price;
+      });
+      renderCoinList();
+      updateHeaderPrice();
+      updateOrderBook();
+      updateRecentTrades();
+    };
+    
+    const startPriceUpdates = () => {
+      setInterval(() => {
+        if (Math.random() > 0.2) fetchPrices();
+        else simulatePrices();
+        checkLiquidations();
+        if (Math.random() > 0.7) updateLeaderboard();
+      }, 4000);
+    };
+
+    // ==================== UI RENDERING ====================
+    const renderCoinList = (searchQuery = '', filter = 'all') => {
+      const container = $('#coin-list-items');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      let filteredCoins = state.coins.filter(coin => {
+        const matchesSearch = coin.name.toLowerCase().includes(searchQuery) || coin.symbol.toLowerCase().includes(searchQuery);
+        if (!matchesSearch) return false;
+        if (filter === 'gainers') return coin.change24h > 2;
+        if (filter === 'losers') return coin.change24h < -2;
+        return true;
+      });
+      
+      if (filter === 'gainers') filteredCoins.sort((a, b) => b.change24h - a.change24h);
+      else if (filter === 'losers') filteredCoins.sort((a, b) => a.change24h - b.change24h);
+      else filteredCoins.sort((a, b) => b.volume24h - a.volume24h);
+      
+      filteredCoins = filteredCoins.slice(0, 50);
+      
+      filteredCoins.forEach(coin => {
+        const coinEl = document.createElement('div');
+        coinEl.className = `coin-item ${coin.symbol === state.currentPair.replace('USDT', '') ? 'active' : ''}`;
+        coinEl.innerHTML = `
+          <div class="coin-icon">${coin.icon}</div>
+          <div class="coin-info">
+            <div class="coin-name">${coin.name} <span class="coin-symbol">${coin.symbol}</span></div>
+          </div>
+          <div class="coin-price">${formatPrice(coin.price)}</div>
+          <div class="coin-change ${coin.change24h >= 0 ? 'positive' : 'negative'}">${formatPercent(coin.change24h)}</div>
+        `;
+        
+        coinEl.addEventListener('click', () => {
+          state.currentPair = `${coin.symbol}USDT`;
+          $$('#current-pair-symbol, #chart-pair-symbol, #spot-pair-symbol, #futures-pair-symbol, #fullscreen-pair-symbol').forEach(el => { if (el) el.textContent = coin.symbol; });
+          $('#current-price').textContent = formatPrice(coin.price);
+          $('#current-change').textContent = formatPercent(coin.change24h);
+          $('#current-change').className = `pair-change ${coin.change24h >= 0 ? 'positive' : 'negative'}`;
+          $$('.coin-item').forEach(item => item.classList.remove('active'));
+          coinEl.classList.add('active');
+          initAllCharts();
+          updateOrderBook(coin.symbol);
+          updateRecentTrades(coin.symbol);
+        });
+        
+        container.appendChild(coinEl);
+      });
+    };
+    
+    const updateHeaderPrice = () => {
+      const coin = state.coins.find(c => c.symbol === state.currentPair.replace('USDT', ''));
+      if (coin) {
+        $('#current-price').textContent = formatPrice(coin.price);
+        $('#current-change').textContent = formatPercent(coin.change24h);
+        $('#current-change').className = `pair-change ${coin.change24h >= 0 ? 'positive' : 'negative'}`;
+      }
+    };
+    
+    const renderNotifications = () => {
+      const container = $('#notification-list');
+      if (!container) return;
+      container.innerHTML = '';
+      if (state.notifications.length === 0) { container.innerHTML = '<div class="text-center text-secondary py-4 text-sm">No notifications</div>'; return; }
+      state.notifications.slice(0, 15).forEach(notification => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${notification.read ? '' : 'unread'}`;
+        let iconClass = 'fa-bell', iconType = '';
+        if (notification.type === 'success') { iconClass = 'fa-check-circle'; iconType = 'trade'; }
+        else if (notification.type === 'danger') { iconClass = 'fa-exclamation-circle'; iconType = 'liquidation'; }
+        else if (notification.type === 'warning') { iconClass = 'fa-exclamation-triangle'; iconType = 'transfer'; }
+        else if (notification.title.includes('Deposit')) iconType = 'deposit';
+        item.innerHTML = `
+          <div class="notification-icon ${iconType}"><i class="fas ${iconClass}"></i></div>
+          <div class="notification-content">
+            <div class="notification-title">${notification.title}</div>
+            <div class="notification-message">${notification.message}</div>
+            <div class="notification-time">${formatRelativeTime(notification.time)}</div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+      updateNotificationBadge();
+    };
+    
+    const updateNotificationBadge = () => {
+      const badge = $('#notification-badge');
+      if (badge) {
+        const unreadCount = state.notifications.filter(n => !n.read).length;
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+      }
+    };
+    
+    const renderActivityLog = () => {
+      const container = $('#activity-list');
+      if (!container) return;
+      container.innerHTML = '';
+      const userActivities = state.activityLog.filter(a => !a.userId || a.userId === state.currentUser?.id).slice(0, 20);
+      if (userActivities.length === 0) { container.innerHTML = '<div class="text-center text-secondary py-4 text-sm">No recent activity</div>'; return; }
+      userActivities.forEach(activity => {
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+        let icon = 'fa-info-circle', color = 'var(--text-secondary)';
+        if (activity.action.includes('Trade')) { icon = 'fa-exchange-alt'; color = activity.details.includes('bought') ? 'var(--success)' : 'var(--danger)'; }
+        else if (activity.action.includes('Deposit')) { icon = 'fa-plus-circle'; color = 'var(--success)'; }
+        else if (activity.action.includes('Transfer')) { icon = 'fa-exchange-alt'; color = 'var(--warning)'; }
+        else if (activity.action.includes('Liquidation')) { icon = 'fa-exclamation-triangle'; color = 'var(--danger)'; }
+        item.innerHTML = `
+          <div class="activity-icon" style="color: ${color}"><i class="fas ${icon}"></i></div>
+          <div class="activity-content">
+            <div class="activity-title">${activity.action}</div>
+            <div class="activity-details">${activity.details}</div>
+            <div class="activity-time">${formatRelativeTime(activity.time)}</div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    };
+    
+    const renderPositions = () => {
+      const spotContainer = $('#spot-positions');
+      if (spotContainer) {
+        spotContainer.innerHTML = '';
+        const userPositions = state.positions.spot.filter(p => p.userId === state.currentUser?.id);
+        if (userPositions.length === 0) { spotContainer.innerHTML = '<div class="text-center text-secondary py-4 text-sm">No open positions</div>'; return; }
+        userPositions.forEach(position => {
+          const currentPrice = state.prices[position.symbol] || position.currentPrice;
+          const pnl = (currentPrice - position.entryPrice) * position.amount;
+          const pnlPercent = ((currentPrice - position.entryPrice) / position.entryPrice) * 100;
+          const item = document.createElement('div');
+          item.className = 'position-item';
+          item.innerHTML = `
+            <div class="position-header"><span>${position.symbol}/USDT</span><span class="${pnl >= 0 ? 'text-success' : 'text-danger'}">${formatPrice(pnl)} (${formatPercent(pnlPercent)})</span></div>
+            <div class="position-details"><div>Side: <span class="${position.side === 'buy' ? 'text-success' : 'text-danger'}">${position.side.toUpperCase()}</span></div><div>Amount: ${position.amount.toFixed(6)}</div><div>Entry: ${formatPrice(position.entryPrice)}</div><div>Current: ${formatPrice(currentPrice)}</div></div>
+            <button class="close-position" data-id="${position.id}">Close Position</button>
+          `;
+          item.querySelector('.close-position').addEventListener('click', () => { closeSpotPosition(position.id); });
+          spotContainer.appendChild(item);
+        });
+      }
+      
+      const futuresContainer = $('#futures-positions');
+      if (futuresContainer) {
+        futuresContainer.innerHTML = '';
+        const userPositions = state.positions.futures.filter(p => p.userId === state.currentUser?.id);
+        if (userPositions.length === 0) { futuresContainer.innerHTML = '<div class="text-center text-secondary py-4 text-sm">No open positions</div>'; return; }
+        userPositions.forEach(position => {
+          const currentPrice = state.prices[position.symbol] || position.currentPrice;
+          const priceDiff = position.side === 'long' ? currentPrice - position.entryPrice : position.entryPrice - currentPrice;
+          const pnl = priceDiff * position.amount * position.leverage;
+          const pnlPercent = (priceDiff / position.entryPrice) * 100 * position.leverage;
+          const liquidationPrice = position.side === 'long' ? position.entryPrice * (1 - 0.9 / position.leverage) : position.entryPrice * (1 + 0.9 / position.leverage);
+          const item = document.createElement('div');
+          item.className = `position-item ${position.side === 'short' ? 'short' : ''}`;
+          item.innerHTML = `
+            <div class="position-header"><span>${position.symbol}/USDT ${position.side.toUpperCase()}</span><span class="position-pnl ${pnl >= 0 ? 'positive' : 'negative'}">${formatPrice(pnl)} (${formatPercent(pnlPercent)})</span></div>
+            <div class="position-details"><div>Leverage: ${position.leverage}x</div><div>Margin: ${formatPrice(position.margin)}</div><div>Entry: ${formatPrice(position.entryPrice)}</div><div>Liquidation: ${formatPrice(liquidationPrice)}</div></div>
+            <button class="close-position" data-id="${position.id}">Close Position</button>
+          `;
+          item.querySelector('.close-position').addEventListener('click', () => { closeFuturesPosition(position.id); });
+          futuresContainer.appendChild(item);
+        });
+      }
+    };
+    
+    const renderWallet = () => {
+      const balance = state.currentUser?.balance || 0;
+      $$('#wallet-total-balance, #spot-balance, #futures-balance, #transfer-balance, #header-balance').forEach(el => {
+        if (el) {
+          if (el.id === 'wallet-total-balance' || el.id === 'header-balance') el.textContent = `$${balance.toFixed(2)}`;
+          else el.textContent = `${balance.toFixed(2)} USDT`;
+        }
+      });
+    };
+    
+    const renderLeaderboard = (period = '7d') => {
+      const container = $('#leaderboard-list');
+      if (!container) return;
+      container.innerHTML = '';
+      const topTraders = state.leaderboard.slice(0, 10);
+      if (topTraders.length === 0) { container.innerHTML = '<div class="text-center text-secondary py-4 text-sm">No traders yet</div>'; return; }
+      topTraders.forEach(trader => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        let rankClass = '';
+        if (trader.rank === 1) rankClass = 'top-1';
+        else if (trader.rank === 2) rankClass = 'top-2';
+        else if (trader.rank === 3) rankClass = 'top-3';
+        const user = state.users.find(u => u.id === trader.userId);
+        let avatarHtml = `<div class="leaderboard-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>`;
+        if (user?.profilePicture) avatarHtml = `<div class="leaderboard-avatar"><img src="${user.profilePicture}" alt="${trader.username}"></div>`;
+        item.innerHTML = `
+          <div class="leaderboard-rank ${rankClass}">${trader.rank}</div>
+          <div class="leaderboard-user">${avatarHtml}<div class="leaderboard-name">${trader.username}</div></div>
+          <div class="leaderboard-pnl ${trader.totalPnl >= 0 ? 'positive' : 'negative'}">${trader.totalPnl >= 0 ? '+' : ''}${formatPrice(trader.totalPnl)}</div>
+        `;
+        container.appendChild(item);
+      });
+    };
+    
+    const updateUserDisplay = () => {
+      if (!state.currentUser) return;
+      $('#header-username').textContent = state.currentUser.username;
+      const avatar = $('#user-avatar');
+      if (state.currentUser.profilePicture) avatar.innerHTML = `<img src="${state.currentUser.profilePicture}" alt="${state.currentUser.username}">`;
+      else avatar.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+      const adminOptions = $('#admin-deposit');
+      const adminNavItem = $('#admin-nav-item');
+      if (adminOptions) adminOptions.style.display = state.currentUser.isAdmin ? 'flex' : 'none';
+      if (adminNavItem) adminNavItem.style.display = state.currentUser.isAdmin ? 'flex' : 'none';
+      renderWallet();
+    };
+    
+    const renderOrderBook = (symbol = null) => {
+      const asksContainer = $('#order-book-asks');
+      const bidsContainer = $('#order-book-bids');
+      const priceDisplay = $('#order-book-price');
+      if (!asksContainer || !bidsContainer || !priceDisplay) return;
+      const currentSymbol = symbol || state.currentPair.replace('USDT', '');
+      const currentPrice = state.prices[currentSymbol] || 61245.32;
+      priceDisplay.textContent = formatPrice(currentPrice);
+      const generateOrders = (basePrice, count, isAsk) => {
+        const orders = [];
+        for (let i = 0; i < count; i++) {
+          const priceOffset = (i + 1) * (basePrice * 0.0005);
+          const price = isAsk ? basePrice + priceOffset : basePrice - priceOffset;
+          const amount = (Math.random() * 2 + 0.1).toFixed(4);
+          orders.push({ price, amount, total: (parseFloat(amount) * price).toFixed(2) });
+        }
+        return orders;
+      };
+      const asks = generateOrders(currentPrice, 8, true);
+      const bids = generateOrders(currentPrice, 8, false);
+      asksContainer.innerHTML = asks.map(order => `<div class="order-book-row ask"><span>${formatPrice(order.price)}</span><span class="order-book-amount">${order.amount}</span><span>${parseFloat(order.total).toLocaleString()}</span></div>`).join('');
+      bidsContainer.innerHTML = bids.map(order => `<div class="order-book-row bid"><span>${formatPrice(order.price)}</span><span class="order-book-amount">${order.amount}</span><span>${parseFloat(order.total).toLocaleString()}</span></div>`).join('');
+    };
+    
+    const updateOrderBook = (symbol = null) => { renderOrderBook(symbol); };
+    
+    const renderRecentTrades = (symbol = null) => {
+      const container = $('#recent-trades');
+      if (!container) return;
+      const currentSymbol = symbol || state.currentPair.replace('USDT', '');
+      const currentPrice = state.prices[currentSymbol] || 61245.32;
+      const trades = [];
+      for (let i = 0; i < 10; i++) {
+        const price = currentPrice * (1 + (Math.random() - 0.5) * 0.001);
+        const amount = (Math.random() * 0.1 + 0.001).toFixed(5);
+        const time = new Date(Date.now() - i * 30000);
+        const side = Math.random() > 0.5 ? 'buy' : 'sell';
+        trades.push({ price: parseFloat(price.toFixed(2)), amount: parseFloat(amount), time: time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }), side });
+      }
+      container.innerHTML = trades.map(trade => `<div class="trade-item ${trade.side}"><span>${formatPrice(trade.price)}</span><span>${trade.amount.toFixed(5)}</span><span>${trade.time}</span></div>`).join('');
+    };
+    
+    const updateRecentTrades = (symbol = null) => { renderRecentTrades(symbol); };
+    
+    const renderAdminPanel = () => {
+      if (!state.currentUser?.isAdmin) return;
+      const tbody = $('#admin-user-list');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      state.users.filter(u => !u.isAdmin).forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.country}</td>
+          <td><input type="number" class="balance-input" value="${user.balance}" data-user-id="${user.id}"></td>
+          <td><button class="update-balance-btn" data-user-id="${user.id}">Update</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      // Add event listeners to update buttons
+      $$('.update-balance-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const userId = e.target.dataset.userId;
+          const input = $(`.balance-input[data-user-id="${userId}"]`);
+          const newBalance = parseFloat(input.value);
+          if (!isNaN(newBalance) && newBalance >= 0) {
+            const user = state.users.find(u => u.id === userId);
+            if (user) {
+              user.balance = newBalance;
+              user.wallet = user.wallet || {};
+              user.wallet.USDT = newBalance;
+              saveToLocalStorage('users', state.users);
+              showNotification('Balance Updated', `Updated ${user.username}'s balance to $${newBalance.toFixed(2)}`, 'success');
+              logActivity('Admin Balance Update', `Admin updated ${user.username}'s balance to $${newBalance.toFixed(2)}`);
+            }
+          }
+        });
+      });
+    };
+
+    // ==================== TRADING LOGIC ====================
+    const executeSpotTrade = (side) => {
+      const amountInput = $('#spot-amount');
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0 || isNaN(amount)) { showNotification('Invalid amount', 'Please enter a valid trade amount', 'danger'); return; }
+      const currentPrice = state.prices[state.currentPair.replace('USDT', '')] || 100;
+      const symbol = state.currentPair.replace('USDT', '');
+      
+      if (side === 'buy') {
+        if (amount > (state.currentUser?.balance || 0)) { showNotification('Insufficient balance', `You need ${formatPrice(amount)} USDT but only have ${formatPrice(state.currentUser?.balance || 0)}`, 'danger'); return; }
+        const coinAmount = amount / currentPrice;
+        // Deduct USDT from balance
+        state.currentUser.balance -= amount;
+        // Add coin to wallet
+        if (!state.currentUser.wallet) state.currentUser.wallet = {};
+        state.currentUser.wallet[symbol] = (state.currentUser.wallet[symbol] || 0) + coinAmount;
+        // Save position
+        state.positions.spot.push({ id: generateId(), userId: state.currentUser.id, symbol, side: 'buy', amount: coinAmount, entryPrice: currentPrice, currentPrice, timestamp: Date.now() });
+        saveToLocalStorage('positions', state.positions);
+        saveToLocalStorage('currentUser', state.currentUser);
+        // Update user in users array
+        const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+        if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+        logActivity('Spot Trade', `Bought ${coinAmount.toFixed(6)} ${symbol} at ${formatPrice(currentPrice)}`);
+        showNotification('Trade Executed', `Bought ${coinAmount.toFixed(4)} ${symbol} for ${formatPrice(amount)}`, 'success');
+      } else {
+        // Selling: check if user has the coin
+        const coinBalance = state.currentUser.wallet?.[symbol] || 0;
+        const coinAmount = amount / currentPrice;
+        if (coinAmount > coinBalance) { showNotification('Insufficient coins', `You don't have enough ${symbol} to sell`, 'danger'); return; }
+        // Deduct coin from wallet
+        state.currentUser.wallet[symbol] -= coinAmount;
+        // Add USDT to balance
+        state.currentUser.balance += amount;
+        // Save position
+        state.positions.spot.push({ id: generateId(), userId: state.currentUser.id, symbol, side: 'sell', amount: coinAmount, entryPrice: currentPrice, currentPrice, timestamp: Date.now() });
+        saveToLocalStorage('positions', state.positions);
+        saveToLocalStorage('currentUser', state.currentUser);
+        const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+        if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+        logActivity('Spot Trade', `Sold ${coinAmount.toFixed(6)} ${symbol} at ${formatPrice(currentPrice)}`);
+        showNotification('Trade Executed', `Sold ${coinAmount.toFixed(4)} ${symbol} for ${formatPrice(amount)}`, 'success');
+      }
+      amountInput.value = '';
+      renderWallet();
+      renderPositions();
+      updateUserDisplay();
+    };
+    
+    const executeFuturesTrade = (side) => {
+      const marginInput = $('#futures-margin');
+      const margin = parseFloat(marginInput.value);
+      const leverage = parseInt($('#leverage-slider').value);
+      if (!margin || margin <= 0 || isNaN(margin)) { showNotification('Invalid margin', 'Please enter a valid margin amount', 'danger'); return; }
+      if (margin > (state.currentUser?.balance || 0)) { showNotification('Insufficient margin', `You need ${formatPrice(margin)} USDT but only have ${formatPrice(state.currentUser?.balance || 0)}`, 'danger'); return; }
+      const currentPrice = state.prices[state.currentPair.replace('USDT', '')] || 100;
+      const positionSize = (margin * leverage) / currentPrice;
+      state.currentUser.balance -= margin;
+      state.positions.futures.push({ id: generateId(), userId: state.currentUser.id, symbol: state.currentPair.replace('USDT', ''), side, amount: positionSize, margin, leverage, entryPrice: currentPrice, currentPrice, timestamp: Date.now(), liquidationPrice: side === 'long' ? currentPrice * (1 - 0.9 / leverage) : currentPrice * (1 + 0.9 / leverage) });
+      saveToLocalStorage('positions', state.positions);
+      saveToLocalStorage('currentUser', state.currentUser);
+      const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+      if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+      logActivity('Futures Trade', `Opened ${side} ${positionSize.toFixed(4)} ${state.currentPair.replace('USDT', '')} at ${formatPrice(currentPrice)} with ${leverage}x leverage`);
+      showNotification('Position Opened', `${side.toUpperCase()} ${positionSize.toFixed(4)} ${state.currentPair.replace('USDT', '')} with ${leverage}x leverage`, 'success');
+      marginInput.value = '';
+      renderWallet();
+      renderPositions();
+      updateUserDisplay();
+    };
+    
+    const closeSpotPosition = (positionId) => {
+      const positionIndex = state.positions.spot.findIndex(p => p.id === positionId);
+      if (positionIndex === -1) return;
+      const position = state.positions.spot[positionIndex];
+      const currentPrice = state.prices[position.symbol] || position.currentPrice;
+      const pnl = position.side === 'buy' ? (currentPrice - position.entryPrice) * position.amount : (position.entryPrice - currentPrice) * position.amount;
+      const totalValue = position.amount * currentPrice;
+      state.currentUser.balance += totalValue + pnl;
+      state.currentUser.totalPnl = (state.currentUser.totalPnl || 0) + pnl;
+      state.currentUser.tradesCount = (state.currentUser.tradesCount || 0) + 1;
+      state.positions.spot.splice(positionIndex, 1);
+      saveToLocalStorage('positions', state.positions);
+      saveToLocalStorage('currentUser', state.currentUser);
+      const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+      if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+      updateLeaderboard();
+      logActivity('Position Closed', `Closed ${position.symbol} position with PnL: ${formatPrice(pnl)}`);
+      showNotification('Position Closed', `Closed ${position.symbol} position with ${pnl >= 0 ? 'profit' : 'loss'} of ${formatPrice(Math.abs(pnl))}`, pnl >= 0 ? 'success' : 'danger');
+      renderWallet();
+      renderPositions();
+      updateUserDisplay();
+    };
+    
+    const closeFuturesPosition = (positionId) => {
+      const positionIndex = state.positions.futures.findIndex(p => p.id === positionId);
+      if (positionIndex === -1) return;
+      const position = state.positions.futures[positionIndex];
+      const currentPrice = state.prices[position.symbol] || position.currentPrice;
+      const priceDiff = position.side === 'long' ? currentPrice - position.entryPrice : position.entryPrice - currentPrice;
+      const pnl = priceDiff * position.amount * position.leverage;
+      state.currentUser.balance += position.margin + pnl;
+      state.currentUser.totalPnl = (state.currentUser.totalPnl || 0) + pnl;
+      state.currentUser.tradesCount = (state.currentUser.tradesCount || 0) + 1;
+      state.positions.futures.splice(positionIndex, 1);
+      saveToLocalStorage('positions', state.positions);
+      saveToLocalStorage('currentUser', state.currentUser);
+      const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+      if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+      updateLeaderboard();
+      logActivity('Position Closed', `Closed ${position.side} ${position.symbol} futures position with PnL: ${formatPrice(pnl)}`);
+      showNotification('Position Closed', `Closed ${position.symbol} ${position.side.toUpperCase()} position with ${pnl >= 0 ? 'profit' : 'loss'} of ${formatPrice(Math.abs(pnl))}`, pnl >= 0 ? 'success' : 'danger');
+      renderWallet();
+      renderPositions();
+      updateUserDisplay();
+    };
+    
+    const checkLiquidations = () => {
+      for (let i = state.positions.futures.length - 1; i >= 0; i--) {
+        const position = state.positions.futures[i];
+        const currentPrice = state.prices[position.symbol] || position.currentPrice;
+        position.currentPrice = currentPrice;
+        const isLiquidated = position.side === 'long' ? currentPrice <= position.liquidationPrice : currentPrice >= position.liquidationPrice;
+        if (isLiquidated) {
+          const admin = state.users.find(u => u.isAdmin);
+          if (admin) { admin.balance += position.margin; saveToLocalStorage('users', state.users); }
+          const user = state.users.find(u => u.id === position.userId);
+          if (user && user.id === state.currentUser?.id) { user.totalPnl = (user.totalPnl || 0) - position.margin; state.currentUser.totalPnl = user.totalPnl; }
+          state.positions.futures.splice(i, 1);
+          logActivity('Liquidation', `Position liquidated: ${position.symbol} ${position.side.toUpperCase()} at ${formatPrice(currentPrice)}`);
+          showNotification('Position Liquidated', `Your ${position.symbol} position was liquidated at ${formatPrice(currentPrice)}`, 'danger');
+          saveToLocalStorage('positions', state.positions);
+          if (position.userId === state.currentUser?.id) { renderPositions(); renderWallet(); updateUserDisplay(); }
+        }
+      }
+    };
+    
+    const updateLeaderboard = () => {
+      state.leaderboard = state.users.filter(u => !u.isAdmin).map(user => ({
+        userId: user.id, username: user.username, profilePicture: user.profilePicture,
+        totalPnl: user.totalPnl || 0, tradesCount: user.tradesCount || 0, winRate: 40 + Math.random() * 40
+      })).sort((a, b) => b.totalPnl - a.totalPnl).map((item, index) => ({ ...item, rank: index + 1 })).slice(0, 50);
+      saveToLocalStorage('leaderboard', state.leaderboard);
+      if ($('.page.active')?.id === 'leaderboard-page') renderLeaderboard($('#leaderboard-period')?.value || '7d');
+    };
+
+    // ==================== WALLET & ADMIN FUNCTIONS ====================
+    const handleTransfer = () => {
+      const recipient = $('#transfer-recipient').value.trim();
+      const amount = parseFloat($('#transfer-amount').value);
+      if (!recipient || !amount || amount <= 0 || isNaN(amount)) { showNotification('Invalid input', 'Please fill in all fields with valid values', 'danger'); return; }
+      if (amount > (state.currentUser?.balance || 0)) { showNotification('Insufficient balance', `You can only transfer up to ${formatPrice(state.currentUser?.balance || 0)} USDT`, 'danger'); return; }
+      const recipientUser = state.users.find(u => u.username.toLowerCase() === recipient.toLowerCase());
+      if (!recipientUser) { showNotification('User not found', `No user with username "${recipient}" exists`, 'danger'); return; }
+      if (recipientUser.id === state.currentUser.id) { showNotification('Invalid transfer', 'Cannot transfer to yourself', 'danger'); return; }
+      state.currentUser.balance -= amount;
+      recipientUser.balance += amount;
+      saveToLocalStorage('users', state.users);
+      saveToLocalStorage('currentUser', state.currentUser);
+      logActivity('Transfer Sent', `Sent ${formatPrice(amount)} USDT to ${recipientUser.username}`);
+      showNotification('Transfer Complete', `Sent ${formatPrice(amount)} USDT to ${recipientUser.username}`, 'success');
+      $('#transfer-modal').classList.remove('active');
+      $('#transfer-recipient').value = '';
+      $('#transfer-amount').value = '';
+      renderWallet();
+      updateUserDisplay();
+    };
+    
+    const handleAdminDeposit = () => {
+      if (!state.currentUser?.isAdmin) { showNotification('Access denied', 'Only administrators can deposit funds', 'danger'); return; }
+      const username = $('#deposit-username').value.trim();
+      const amount = parseFloat($('#admin-deposit-amount').value);
+      const note = $('#deposit-note').value.trim();
+      if (!username || !amount || amount <= 0 || isNaN(amount)) { showNotification('Invalid input', 'Please fill in all fields with valid values', 'danger'); return; }
+      const recipientUser = state.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (!recipientUser) { showNotification('User not found', `No user with username "${username}" exists`, 'danger'); return; }
+      if (recipientUser.isAdmin) { showNotification('Invalid recipient', 'Cannot deposit to another admin account', 'danger'); return; }
+      recipientUser.balance += amount;
+      recipientUser.wallet = recipientUser.wallet || {};
+      recipientUser.wallet.USDT = (recipientUser.wallet.USDT || 0) + amount;
+      saveToLocalStorage('users', state.users);
+      logActivity('Admin Deposit', `Deposited ${formatPrice(amount)} USDT to ${recipientUser.username}${note ? `: ${note}` : ''}`);
+      showNotification('Deposit Successful', `Deposited ${formatPrice(amount)} USDT to ${recipientUser.username}`, 'success');
+      $('#admin-deposit-modal').classList.remove('active');
+      $('#deposit-username').value = '';
+      $('#admin-deposit-amount').value = '';
+      $('#deposit-note').value = '';
+      if (recipientUser.id === state.currentUser?.id) {
+        state.currentUser.balance = recipientUser.balance;
+        state.currentUser.wallet = recipientUser.wallet;
+        saveToLocalStorage('currentUser', state.currentUser);
+        renderWallet();
+        updateUserDisplay();
+      }
+    };
+
+    // ==================== PROFILE MANAGEMENT ====================
+    const saveProfile = () => {
+      const newUsername = $('#edit-username').value.trim();
+      const newCountry = $('#edit-country').value;
+      if (!newUsername) { showNotification('Invalid username', 'Username cannot be empty', 'danger'); return; }
+      state.currentUser.username = newUsername;
+      state.currentUser.country = newCountry;
+      const profileImg = $('#edit-profile-preview img');
+      if (profileImg) state.currentUser.profilePicture = profileImg.src;
+      const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+      if (userIndex !== -1) { state.users[userIndex] = { ...state.currentUser }; saveToLocalStorage('users', state.users); }
+      saveToLocalStorage('currentUser', state.currentUser);
+      updateUserDisplay();
+      $('#profile-modal').classList.remove('active');
+      showNotification('Profile Updated', 'Your profile has been saved successfully', 'success');
+      logActivity('Profile Update', 'User updated profile information');
+    };
+
+    // ==================== DEPOSIT CHART ====================
+    const initDepositChart = () => {
+      const ctx = $('#deposit-chart');
+      if (!ctx) return;
+      const labels = [];
+      const data = [];
+      const now = Date.now();
+      for (let i = 30; i >= 0; i--) {
+        const date = new Date(now - i * 24 * 60 * 60 * 1000);
+        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        data.push(0); // Default to 0 for users who haven't deposited
+      }
+      const userDeposits = state.depositHistory.filter(d => d.userId === state.currentUser?.id);
+      if (userDeposits.length > 0) {
+        userDeposits.forEach(deposit => {
+          const dayIndex = Math.floor((now - deposit.timestamp) / (24 * 60 * 60 * 1000));
+          if (dayIndex >= 0 && dayIndex < 31) data[30 - dayIndex] += deposit.amount;
+        });
+      }
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (state.depositChart) state.depositChart.destroy();
+      state.depositChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Deposits (USDT)',
+            data,
+            borderColor: '#f0b90b',
+            backgroundColor: 'rgba(240, 185, 11, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: isDark ? '#1e2329' : '#ffffff', titleColor: isDark ? '#eaecef' : '#1a1b1e', bodyColor: isDark ? '#848e9c' : '#5e6673', borderColor: isDark ? '#2b3139' : '#e9ecef', borderWidth: 1, padding: 12, displayColors: false } },
+          scales: {
+            x: { grid: { color: isDark ? '#2b3139' : '#e9ecef' }, ticks: { color: isDark ? '#848e9c' : '#5e6673', maxTicksLimit: 8, font: { size: 10 } } },
+            y: { beginAtZero: true, grid: { color: isDark ? '#2b3139' : '#e9ecef' }, ticks: { color: isDark ? '#848e9c' : '#5e6673', callback: (value) => '$' + value.toLocaleString(), font: { size: 10 } } }
+          },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false }
+        }
+      });
+    };
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+      initAuth();
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) $('#sidebar').classList.remove('active');
+        setTimeout(() => { initAllCharts(); }, 100);
+      });
+    });
+  </script>
+</body>
+</html>
